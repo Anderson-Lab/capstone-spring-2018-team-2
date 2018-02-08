@@ -24,21 +24,10 @@ meps_scrape = function(){
   
   # map the variable description in column 'X4' to the codes in rd.p
 
-  descriptions = sapply(colnames(rd.p), function(x) codes_df[x, 'X4'] )
-
-  save(descriptions, file = "meta.rda")
+  meta_named_char = sapply(colnames(rd.p), function(x) codes_df[x, 'X4'] )
+  
+  meta = data.frame(as.list(descriptions))
+  
+  save(meta, file = "meta.rda")
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
