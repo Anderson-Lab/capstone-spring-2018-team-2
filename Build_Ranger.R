@@ -3,7 +3,11 @@ library(caret)
 load('data.rda')
 load('meta.rda')
 
-target <- 'ERTOT15'
+# Split vars
+plan.dsn <- c('HOSPINSX', 'ANNDEDCT', 'HSAACCT', 'PLANMETL')
+behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 'BRSTEX53', 'MAMOGR53', 'CLNTST53')
+controls <- c('CHBMIX42','BMINDX53','ADGENH42', 'AGE15X', 'FAMINC15', 'COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
+target <- 'IPDIS15'
 descriptions[target]
 
 #split
