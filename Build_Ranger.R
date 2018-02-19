@@ -1,20 +1,28 @@
-
 library(ranger)
 library(caret)
 load('data.rda')
 load('meta.rda')
 
-# Split vars
-plan.dsn <- c('HOSPINSX', 'ANNDEDCT', 'HSAACCT', 'PLANMETL')
-behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 'BRSTEX53', 'MAMOGR53', 'CLNTST53')
-controls <- c('CHBMIX42','BMINDX53','ADGENH42', 'AGE15X', 'FAMINC15', 'COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
+# Get data
+meps <- Join_MEPS()
+
+# Get vars
+plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
+behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 
+               'BRSTEX53', 'MAMOGR53', 'CLNTST53')
+controls <- c('PHOLDER', 'CHBMIX42','BMINDX53','ADGENH42', 'AGE15X', 'FAMINC15', 
+              'COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
 target <- 'IPDIS15'
 
+weights <- 'PERWT15F'
+vars <- c(target, plan.dsn, behaviors, controls, weights)
+
+
 #split
-trainidx <- createDataPartition(rd.p$ERTOT15, p=.8, list = FALSE)
-train <- rd.p[trainidx,]
-y.test <- as.data.frame(rd.p[-trainidx,target])
-x.test <- rd.p[-trainidx,-which(names(rd.p) == target)]
+trainidx <- createDataPartition(meps$ERTOT15, p=.8, list = FALSE)
+train <- meps[trainidx,]
+y.test <- as.data.frame(meps[-trainidx,target])
+x.test <- meps[-trainidx,-which(names(meps) == target)]
 
 
 f <- formula(paste(target, paste(names(rd.p[,names(rd.p) != target]), collapse = '+' ), sep = '~'))

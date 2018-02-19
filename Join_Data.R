@@ -1,11 +1,10 @@
 Join_MEPS <- function(){
 library(dplyr)
 load('prp_full2015.rda')
-prp <- rd.p
+prp <- rd
 load('fyc_full2015.rda')
 fyc <- rd
 #Remove var to save space
-remove(rd.p)
 remove(rd)
 
 prp <- droplevels(prp[prp$NAMECHNG == 2,])
