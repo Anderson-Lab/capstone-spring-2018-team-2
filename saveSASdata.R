@@ -4,9 +4,6 @@ SaveData <- function(currentFileName, saveToFileName){
   #have to join two files: person round plan file and this one
   rd <- read.xport(currentFileName)
 
-  pre <- preProcess(rd, method= c('zv', 'nzv'), na.remove = TRUE)
+  save(rd, file = paste(saveToFileName,".rda", sep=''))
+}
 
-  rd.p <- predict(pre, rd)
-
-  save(rd.p, file = paste(saveToFileName,".rda", sep=''))
-  }
