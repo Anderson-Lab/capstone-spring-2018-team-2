@@ -1,13 +1,20 @@
+Join_MEPS <- function(){
 library(dplyr)
-load('prp2015.rda')
+load('prp_full2015.rda')
 prp <- rd.p
-load('fyc2015.rda')
-fyc <- rd.p
+load('fyc_full2015.rda')
+fyc <- rd
 #Remove var to save space
 remove(rd.p)
+remove(rd)
 
-vars <- c(id, plan.dsn,behaviors, controls, target)
 prp <- droplevels(prp[prp$NAMECHNG == 2,])
+meps <-inner_join(fyc,prp, by=c('DUPERSID'))
 
-meps <-inner_join(prp, fyc, by=c('DUPERSID'))
+return(meps)
+}
+
+
+
+
 
