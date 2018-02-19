@@ -9,5 +9,5 @@ remove(rd.p)
 vars <- c(id, plan.dsn,behaviors, controls, target)
 prp <- droplevels(prp[prp$NAMECHNG == 2,])
 
-meps <- fyc %>% left_join(prp, by=c('DUPERSID'))
+meps <-inner_join(prp, fyc, by=c('DUPERSID'))
 
