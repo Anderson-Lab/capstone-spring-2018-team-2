@@ -1,9 +1,14 @@
 library(ranger)
 library(caret)
+library(dplyr)
 load('meta.rda')
 
 # Get data
 meps <- Join_MEPS()
+
+mepsPublic<-Public_Filter(meps)
+
+mepsPrivate<-Private_Filter(meps)
 
 # Get vars
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
