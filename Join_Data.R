@@ -7,11 +7,27 @@ fyc <- rd
 #Remove var to save space
 remove(rd)
 
-prp <- droplevels(prp[prp$NAMECHNG == 2,])
 
-meps <-inner_join(fyc,prp, by=c('DUPERSID'))
+# this filter knocks prp down to 34673 rows. We want only unique DUPERSIDS, 
+# so we'll select the policyholder row with the most 1's in the status fields
+prp_pholders = prp %>% filter(PHOLDER == 1)
+
+status_prp_pholders = prp_pholders %>% 
+  select(DUPERSID, RN, STATUS1, STATUS2, STATUS3, STATUS4, STATUS5, STATUS6, STATUS7, STATUS8, STATUS9, STATUS10, STATUS11, STATUS12,
+         STATUS13, STATUS14, STATUS15, STATUS16, STATUS17, STATUS18, STATUS19, STATUS20, STATUS21, STATUS22, STATUS23, STATUS24)
+
+unique_prp_by_status_sum = status_prp_pholders %>%
+  mutate(STAT_SUM=Reduce("+",.[3:26])) %>% # sum horizontally across all the status variables
+  group_by(DUPERSID) %>%
+  filter(STAT_SUM > -24) %>% #people who at least answered 1 for one of the status periods (covered by insurance for at least one day during month)
+  mutate(rank = rank(-STAT_SUM, ties.method = "first")) %>% # rank the rows in each group by STAT_SUM
+  top_n(n=1, wt=-rank) # only return the top row
+  
+prp[unique_prp_by_status_sum$DUPERSID, ] %>% group_by(NAMECHNG) %>% count(NAMECHNG)
+meps <-inner_join(fyc,prp[unique_prp_by_status_sum$DUPERSID,], by=c('DUPERSID'))
 
 return(meps)
+
 }
 
 Public_Filter <- function(df){
@@ -31,6 +47,10 @@ Private_Filter <- function(df){
                       PRIOC15==1,PRINO15==1,PRIDE15==1)
   return(dfPrivate)
 }
+
+
+meps <-inner_join(fyc,unique_prp_by_status_sum, by=c('DUPERSID'))
+
 
 
 
