@@ -1,6 +1,7 @@
 library(ranger)
 library(caret)
 library(dplyr)
+source("Join_Data.R")
 load('meta.rda')
 
 # Get data
