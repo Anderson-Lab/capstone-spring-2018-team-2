@@ -6,9 +6,7 @@ load('meta.rda')
 
 # Get data
 meps <- Join_MEPS()
-
 mepsPublic<-Public_Filter(meps)
-
 mepsPrivate<-Private_Filter(meps)
 
 # Get vars
@@ -24,22 +22,22 @@ predVars <- c(plan.dsn, behaviors, controls)
 factors <- c('IPDIS15', 'HOSPINSX', 'PLANMETL', 'HSAACCT', behaviors, 'PHOLDER',
              'CHBMIX42', 'ADGENH42','COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
 #Set target to binary
-meps$IPDIS15[meps$IPDIS15>1] <- 1
+mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
 for(factor in factors){
-  meps[,factor] <- as.factor(meps[, factor])
+  mepsPrivate[,factor] <- as.factor(mepsPrivate[, factor])
 }
 
 #split
-trainidx <- createDataPartition(meps$IPDIS15, p=.8, list = FALSE)
-train <- meps[trainidx,vars]
-y.test <- meps[-trainidx,target]
-x.test <- meps[-trainidx,-which(names(meps) == target)]
+trainidx <- createDataPartition(mepsPrivate$IPDIS15, p=.8, list = FALSE)
+train <- mepsPrivate[trainidx,vars]
+y.test <- mepsPrivate[-trainidx,target]
+x.test <- mepsPrivate[-trainidx,-which(names(meps) == target)]
 
-w<-ifelse(train[, target] == '1', 12,1)
+ds <- downSample(train, train[,target], list = FALSE)
 f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
 fit <- ranger(formula = f,
-              data = train,
-              case.weights = w,
+              data = ds,
+              #case.weights = w,
               num.trees = 50,
               importance = 'impurity',
               min.node.size = 30,
@@ -58,7 +56,7 @@ levels(y.test)<-classNames
 
 colnames(preds.train)<-classNames
 colnames(preds.test)<-classNames
-cutOff = .8
+cutOff = .5
 train.Results<-data.frame(preds.train, 
                           obs = train[,target],
                           pred = ifelse(preds.train[,classNames[1]] < cutOff, classNames[1], classNames[2]))
