@@ -104,12 +104,14 @@ performance(pred, "auc")
 
 
 imp <- fit$variable.importance
-#save(imp, file = "r-shiny/template/data/ranger_imp.rda") # save the data to the r-shiny directory so that var.importance interactivity can be added
 #imp <- imp[imp > 50]
 library(data.table)
 imp.dt<-setDT(as.data.frame(imp), keep.rownames = TRUE)[]
+imp.dt.top <- head(arrange(imp.dt,desc(imp)), n = 10)
+save(imp.dt, file = "r-shiny/template/data/ranger_imp.rda") # save the data to the r-shiny directory so that var.importance interactivity can be added
+
 library(ggplot2)
-ggplot(data=imp.dt, aes(x=reorder(rn,imp), y=imp)) +
+ggplot(data=imp.dt.top, aes(x=reorder(rn,imp), y=imp)) +
   geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
   ggtitle('Variable Importance: Gini Impurity') +
   xlab('Variables') +
