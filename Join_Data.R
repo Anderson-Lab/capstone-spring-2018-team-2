@@ -48,6 +48,12 @@ Private_Filter <- function(df){
   return(dfPrivate)
 }
 
+# to use: df$age.cat <- age.to.cat(df, 'age')
+Age.to.Cat <- function(df, Age.col){
+  levs <- c('Unknown', 'less than 12', '12-17', '18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75 and over')
+  return(cut(df[,Age.col], breaks=c(-Inf,0, 12, 18, 25, 35, 45, 55, 65, 75, Inf), labels=levs))
+}
+
 
 #meps <-inner_join(fyc,unique_prp_by_status_sum, by=c('DUPERSID'))
 
