@@ -21,100 +21,105 @@ vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
 factors <- c('IPDIS15', 'HOSPINSX', 'PLANMETL', 'HSAACCT', behaviors, 'PHOLDER',
              'CHBMIX42', 'ADGENH42','COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
-#Set target to binary
+#Set target to binaryV
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
+
 for(factor in factors){
   mepsPrivate[,factor] <- as.factor(mepsPrivate[, factor])
 }
 
-#split
-trainidx <- createDataPartition(mepsPrivate$IPDIS15, p=.8, list = FALSE)
-train <- mepsPrivate[trainidx,vars]
-y.test <- mepsPrivate[-trainidx,target]
-x.test <- mepsPrivate[-trainidx,-which(names(meps) == target)]
+build_ranger = function(target){
+  
+  predVars <- predVars[!predVars %in% target]
+  
+  #split
+  trainidx <- createDataPartition(mepsPrivate[,target], p=.8, list = FALSE)
+  train <- mepsPrivate[trainidx,vars]
+  y.test <- mepsPrivate[-trainidx,target]
+  x.test <- mepsPrivate[-trainidx,-which(names(meps) == target)]
+  
+  ds <- downSample(train, train[,target], list = FALSE)
+  f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
+  fit <- ranger(formula = f,
+                data = ds,
+                #case.weights = w,
+                num.trees = 50,
+                importance = 'impurity',
+                min.node.size = 30,
+                probability = TRUE,
+                classification = TRUE,
+                sample.fraction = .8)
+  
+  
+  
+  # get model performance metrics
+  preds.train <- as.data.frame(predict(fit, train[,predVars])$predictions)
+  preds.test <- as.data.frame(predict(fit, x.test)$predictions)
+  
 
-ds <- downSample(train, train[,target], list = FALSE)
-f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
-fit <- ranger(formula = f,
-              data = ds,
-              #case.weights = w,
-              num.trees = 50,
-              importance = 'impurity',
-              min.node.size = 30,
-              probability = TRUE,
-              classification = TRUE,
-              sample.fraction = .8)
+  # classNames <- c('NoHosp', 'Hosp')
+  # levels(train[,target])<-classNames
+  # levels(y.test)<-classNames
+  # 
+  # colnames(preds.train)<-classNames
+  # colnames(preds.test)<-classNames
+  # cutOff = .5
+  # train.Results<-data.frame(preds.train, 
+  #                           obs = train[,target],
+  #                           pred = ifelse(preds.train[,classNames[1]] < cutOff, classNames[1], classNames[2]))
+  # test.Results<-data.frame(preds.test, 
+  #                          obs = y.test,
+  #                          pred = ifelse(preds.test[,classNames[1]] < cutOff, classNames[1], classNames[2]))
+  # # test Results
+  # levels(train.Results$pred) <- classNames
+  # levels(test.Results$pred) <- classNames
+  # twoClassSummary(train.Results, lev = classNames)
+  # twoClassSummary(test.Results, lev = classNames) 
+  # 
+  # # Performance Plots
+  # 
+  # library(ROCR)
+  # ## find the best cut off
+  # pred <- prediction( preds.train[,1],  train[,target])
+  # 
+  # plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL)
+  # par(mar=c(4,4,4,4))
+  # par(new=T)
+  # plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
+  # axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
+  # #x<-locator()
+  # 
+  # 
+  # 
+  # plot(performance(pred, "tpr" , x.measure = "fpr"), col = 'red', ylab= NULL)
+  # abline(0,1)
+  # plot(performance(pred, "acc" , x.measure = "cutoff"), col = 'red', ylab= NULL)
+  # 
+  # performance(pred, "auc")
+  # 
+  # #Var Imp Plots
+  # 
+  # #x<-fit$variable.importance
+  # #x<-x[order(x)]
+  # #par(mar = c(4,10,4,4))
+  # #barplot(x, horiz = TRUE, las = 1)
+  # 
+  # 
+  # imp <- fit$variable.importance
+  # #imp <- imp[imp > 50]
+  # library(data.table)
+  # imp.dt<-setDT(as.data.frame(imp), keep.rownames = TRUE)[]
+  # imp.dt.top <- head(arrange(imp.dt,desc(imp)), n = 10)
+  # # save(imp.dt, file = "r-shiny/template/data/ranger_imp.rda") # save the data to the r-shiny directory so that var.importance interactivity can be added
+  # 
+  # library(ggplot2)
+  # ggplot(data=imp.dt.top, aes(x=reorder(rn,imp), y=imp)) +
+  #   geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
+  #   ggtitle('Variable Importance: Gini Impurity') +
+  #   xlab('Variables') +
+  #   ylab('Relative Importance')+
+  #   coord_flip()
+  # 
+}
 
-
-
-# get model performance metrics
-preds.train <- as.data.frame(predict(fit, train[,predVars])$predictions)
-preds.test <- as.data.frame(predict(fit, x.test)$predictions)
-classNames <- c('NoHosp', 'Hosp')
-levels(train[,target])<-classNames
-levels(y.test)<-classNames
-
-colnames(preds.train)<-classNames
-colnames(preds.test)<-classNames
-cutOff = .5
-train.Results<-data.frame(preds.train, 
-                          obs = train[,target],
-                          pred = ifelse(preds.train[,classNames[1]] < cutOff, classNames[1], classNames[2]))
-test.Results<-data.frame(preds.test, 
-                         obs = y.test,
-                         pred = ifelse(preds.test[,classNames[1]] < cutOff, classNames[1], classNames[2]))
-# test Results
-levels(train.Results$pred) <- classNames
-levels(test.Results$pred) <- classNames
-twoClassSummary(train.Results, lev = classNames)
-twoClassSummary(test.Results, lev = classNames) 
-
-
-# Performance Plots
-
-library(ROCR)
-## find the best cut off
-pred <- prediction( preds.train[,1],  train[,target])
-
-plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL)
-par(mar=c(4,4,4,4))
-par(new=T)
-plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
-axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
-#x<-locator()
-
-
-
-plot(performance(pred, "tpr" , x.measure = "fpr"), col = 'red', ylab= NULL)
-abline(0,1)
-plot(performance(pred, "acc" , x.measure = "cutoff"), col = 'red', ylab= NULL)
-
-performance(pred, "auc")
-
-
-
-
-
-#Var Imp Plots
-
-#x<-fit$variable.importance
-#x<-x[order(x)]
-#par(mar = c(4,10,4,4))
-#barplot(x, horiz = TRUE, las = 1)
-
-
-imp <- fit$variable.importance
-#imp <- imp[imp > 50]
-library(data.table)
-imp.dt<-setDT(as.data.frame(imp), keep.rownames = TRUE)[]
-imp.dt.top <- head(arrange(imp.dt,desc(imp)), n = 10)
-save(imp.dt, file = "r-shiny/template/data/ranger_imp.rda") # save the data to the r-shiny directory so that var.importance interactivity can be added
-
-library(ggplot2)
-ggplot(data=imp.dt.top, aes(x=reorder(rn,imp), y=imp)) +
-  geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
-  ggtitle('Variable Importance: Gini Impurity') +
-  xlab('Variables') +
-  ylab('Relative Importance')+
-  coord_flip()
-
+build_ranger('BPCHEK53')
