@@ -6,8 +6,9 @@ load('meta.rda')
 
 # Get data
 meps <- Join_MEPS()
-mepsPublic<-Public_Filter(meps)
-mepsPrivate<-Private_Filter(meps)
+meps.p <- meps[meps$PHOLDER == 1,]
+mepsPublic<-Public_Filter(meps.p)
+mepsPrivate<-Private_Filter(meps.p)
 
 # Get vars
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
@@ -21,8 +22,16 @@ vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
 factors <- c('IPDIS15', 'HOSPINSX', 'PLANMETL', 'HSAACCT', behaviors, 'PHOLDER',
              'CHBMIX42', 'ADGENH42','COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
+
 #Set target to binary
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
+
+#Coerce to fewer factors
+mepsPrivate$ANNDEDCT <- as.numeric(mepsPrivate$ANNDEDCT)
+for(variable in c(plan.dsn, behaviors)){
+  mepsPrivate[mepsPrivate[,variable] < 0, variable] <- "Unknown"
+}
+
 for(factor in factors){
   mepsPrivate[,factor] <- as.factor(mepsPrivate[, factor])
 }
