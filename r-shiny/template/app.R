@@ -58,7 +58,7 @@ ui <- dashboardPage(
             column(width=5,
               box(
                 width = NULL,
-                selectInput("behavior", "Behaviors: ", names(behavior_models)),
+                selectInput("behavior", "Target: ", names(behavior_models)),
                 sliderInput("beh_vars", "Importance variables to show: ",min = 1, max = 15, value = 10)
               ),
               box(
