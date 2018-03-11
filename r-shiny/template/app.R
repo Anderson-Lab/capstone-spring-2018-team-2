@@ -30,8 +30,11 @@ ui <- dashboardPage(
           column(width=5,
             box(
               width=NULL, # needs to be set to null when using column layout
-              sliderInput("hosp_vars", "Importance variables to show: ",min = 1, max = 15, value = 10),
-              verbatimTextOutput("hosp_descriptions")
+              sliderInput("hosp_vars", "Importance variables to show: ",min = 1, max = 15, value = 10)
+            ),
+            box(
+              width=NULL,
+              div(dataTableOutput("hosp_descriptions"), style = "font-size:80%")
             )
           ),
           column(width=7,
@@ -56,8 +59,11 @@ ui <- dashboardPage(
               box(
                 width = NULL,
                 selectInput("behavior", "Behaviors: ", names(behavior_models)),
-                sliderInput("beh_vars", "Importance variables to show: ",min = 1, max = 15, value = 10),
-                verbatimTextOutput("beh_descriptions")
+                sliderInput("beh_vars", "Importance variables to show: ",min = 1, max = 15, value = 10)
+              ),
+              box(
+                width = NULL,
+                div(dataTableOutput("beh_descriptions"), style = "font-size:80%")
               )
             ),
             column(width=7,
@@ -80,11 +86,15 @@ server <- function(input, output) {
   load("data/ranger_imp.rda")
   load("data/behavior_models.rda")
   load("data/meta.rda")
+  meta_named_char <- c(meta_named_char, age.cat="concatenated age")
   
   output$hospitilizationPlot <- renderPlot({
     hosp.imp.dt.top <- arrange(imp.dt,desc(imp))[1:input$hosp_vars, ]
+    descriptions = as.data.frame(hosp.imp.dt.top$rn)
+    colnames(descriptions) <- c("Predictor")
+    descriptions$Description <- meta_named_char[hosp.imp.dt.top$rn]
     
-    output$hosp_descriptions <- renderPrint(meta_named_char[hosp.imp.dt.top[ ,1]])
+    output$hosp_descriptions <- renderDataTable(descriptions, list(searching = FALSE, paging = FALSE))
     
     ggplot(hosp.imp.dt.top, aes(x=reorder(rn,imp), y=imp)) +
       geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
@@ -98,9 +108,11 @@ server <- function(input, output) {
     behavior.imp <-behavior_models[input$behavior]
     behavior.imp.dt <- setDT(as.data.frame(behavior.imp), keep.rownames = TRUE)[]
     behavior.imp.dt.top <- behavior.imp.dt[order(-behavior.imp.dt[[input$behavior]])][1:input$beh_vars, ]
-    
-    output$beh_descriptions <- renderPrint(meta_named_char[behavior.imp.dt.top$rn])
-    
+    descriptions <- as.data.frame(behavior.imp.dt.top$rn)
+    colnames(descriptions) <- c("Predictor")
+    descriptions$Description <- meta_named_char[behavior.imp.dt.top$rn]
+
+    output$beh_descriptions <- renderDataTable(descriptions, list(searching = FALSE, paging = FALSE))
     
     print(ggplot(behavior.imp.dt.top, aes(x=reorder(rn,behavior.imp[[input$behavior]][1:input$beh_vars]), y=behavior.imp[[input$behavior]][1:input$beh_vars])) +
             geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
