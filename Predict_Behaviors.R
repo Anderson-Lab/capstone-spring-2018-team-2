@@ -26,6 +26,7 @@ factors <- c(plan.dsn, behaviors, 'PHOLDER','CHBMIX42', 'ADGENH42','COBRA',
              'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
 
 behavior_models = vector("list", length(behaviors))
+confusion_matrices = vector("list", length(behaviors))
 names(behavior_models) = behaviors
 
 
@@ -68,7 +69,8 @@ for(target in behaviors){
   preds.test$PREDICTION <- colnames(preds.test)[max.col(preds.test,ties.method="first")]
   preds.test$PREDICTION <- as.factor(preds.test$PREDICTION)
   print(paste('RESULTS FOR', target))
-  print(confusionMatrix(preds.train$PREDICTION, train[,target]))
+  # print(confusionMatrix(preds.train$PREDICTION, train[,target]))
+  # Test predictions
   print(confusionMatrix(preds.test$PREDICTION, y.test))
   print('')
   print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -77,6 +79,7 @@ for(target in behaviors){
   imp <- fit$variable.importance
   
   behavior_models[[target]] = imp
+  confusion_matrices[[target]] = confusionMatrix(preds.test$PREDICTION, y.test)
   # for (i in seq_along(imp)){
   #   print(imp[i])
   # }
@@ -96,6 +99,6 @@ for(target in behaviors){
 }
 
 # save the data to the r-shiny directory so that var.importance of each behavior interactivity can be added
-save(behavior_models, file = "r-shiny/template/data/behavior_models.rda") 
+# save(confusion_matrices, file = "r-shiny/template/data/confusion_matrices.rda")
 
 
