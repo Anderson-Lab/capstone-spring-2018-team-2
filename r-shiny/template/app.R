@@ -69,7 +69,9 @@ ui <- dashboardPage(
             column(width=7,
               box(
                 width = NULL,
-                plotOutput("behaviorPlot", height = 350)
+                tabsetPanel(type = "tabs",
+                            tabPanel("Plot", plotOutput("behaviorPlot")),
+                            tabPanel("Confusion Matrix", verbatimTextOutput("confusionPrint"))                )
               ),
               box(
                 title = "Gini Impurity", width = NULL, background = "light-blue",
@@ -86,6 +88,8 @@ server <- function(input, output) {
   load("data/ranger_imp.rda")
   load("data/behavior_models.rda")
   load("data/meta.rda")
+  load("data/confusion_matrices.rda")
+  
   meta_named_char <- c(meta_named_char, age.cat="concatenated age")
   
   output$hospitilizationPlot <- renderPlot({
@@ -113,6 +117,8 @@ server <- function(input, output) {
     descriptions$Description <- meta_named_char[behavior.imp.dt.top$rn]
 
     output$beh_descriptions <- renderDataTable(descriptions, list(searching = FALSE, paging = FALSE))
+    
+    output$confusionPrint <- renderPrint(confusion_matrices[[input$behavior]])
     
     print(ggplot(behavior.imp.dt.top, aes(x=reorder(rn,behavior.imp[[input$behavior]][1:input$beh_vars]), y=behavior.imp[[input$behavior]][1:input$beh_vars])) +
             geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
