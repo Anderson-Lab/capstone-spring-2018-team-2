@@ -24,6 +24,11 @@ vars <- c(plan.dsn, behaviors, controls)
 predVars <- c(plan.dsn, controls)
 factors <- c(plan.dsn, behaviors, 'PHOLDER','CHBMIX42', 'ADGENH42','COBRA', 
              'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
+
+behavior_models = vector("list", length(behaviors))
+names(behavior_models) = behaviors
+
+
 td <- mepsPrivate[,vars]
 #Coerce to fewer factors
 td$ANNDEDCT <- as.numeric(td$ANNDEDCT)
@@ -64,11 +69,17 @@ for(target in behaviors){
   preds.test$PREDICTION <- as.factor(preds.test$PREDICTION)
   print(paste('RESULTS FOR', target))
   print(confusionMatrix(preds.train$PREDICTION, train[,target]))
+  print(confusionMatrix(preds.test$PREDICTION, y.test))
   print('')
   print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
   
   #Var Imp Plots
   imp <- fit$variable.importance
+  
+  behavior_models[[target]] = imp
+  # for (i in seq_along(imp)){
+  #   print(imp[i])
+  # }
   #imp <- imp[imp > 50]
   imp.dt<-setDT(as.data.frame(imp), keep.rownames = TRUE)[]
   imp.dt.top <- head(arrange(imp.dt,desc(imp)), n = 10)
@@ -76,10 +87,15 @@ for(target in behaviors){
   
   print(ggplot(data=imp.dt.top, aes(x=reorder(rn,imp), y=imp)) +
     geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
-    ggtitle(paste('Variable Importance: Gini Impurity\nPredicting:',target)) +
+    ggtitle(paste('Predicting:',target)) +
     xlab('Variables') +
     ylab('Relative Importance')+
     coord_flip())
   
   
 }
+
+# save the data to the r-shiny directory so that var.importance of each behavior interactivity can be added
+save(behavior_models, file = "r-shiny/template/data/behavior_models.rda") 
+
+
