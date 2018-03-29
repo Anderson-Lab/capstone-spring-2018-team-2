@@ -5,6 +5,7 @@ library(shinydashboard)
 library(dplyr)
 
 variables = c(1:24)
+load("data/behavior_models.rda")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Benefit Focus & CofC"),
@@ -85,7 +86,6 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-  load("data/behavior_models.rda")
   load("data/meta.rda")
   load("data/confusion_matrices.rda")
   
