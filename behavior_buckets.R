@@ -70,28 +70,6 @@ add.pv.field('SGMTST53', map.time.since.ext)
 
 add.pv.field('FLUSHT53', map.time.since.ext)
 
-# Poor Behavior: no mammogram or breast exam for females within the last 2 years for folks over 40 years old,
-# No checkup, no colon exam within the last 10 years for folks over 50 years, and no cholesterol check
-
-mepsPrivate %>% 
-  filter(
-      ((SEX == 2 & AGE15X > 40) & ((!BRSTEX53 %in% c('Within Last 2 Yrs', 'Within Last Yr', 'NA')) |
-                                   (!MAMOGR53 %in% c('Within Last 2 Yrs', 'Within Last Yr', 'NA')))) 
-    |
-      ((SEX == 1 & AGE15X > 50) & (!PSA53 %in% c('Within Last 2 Yrs', 'Within Last Yr', 'NA')))
-    |
-      ((AGE15X > 50) & (CHOLCK53 %in% c('Never') | CLNTST53 %in% c('Never', '>10 Yrs Ago')))
-    ) %>%
-  count()
-
-# Fair Behavior: At least one checkup, at least one of the following, given guidelines:
-# a mammogram or breast exam for females within the last 2 years for folks over 40 years old,
-# a colon exam within the last 10 years for folks since they turned 50, or a cholesterol check. Or only a checkup if under 40.
-
-
-# Good Behavior: At least one checkup, a mammogram or breast exam for females within the last 2 years for folks over 40 years old,
-# a colon exam within the last 10 years since they turned 50, and a cholesterol check.
-
 for (care in preventive_behaviors){
   print(meta_named_char[care])
   careCnt = mepsPrivate %>%
@@ -101,3 +79,206 @@ for (care in preventive_behaviors){
   print(careCnt)
   print('------------------------------')
 }
+
+# Good Behavior: 
+#  At least one general checkup (CHECK53) within the last 2 years
+#  AND
+#  A cholesterol check within the last 2 yrs all ages
+#  AND 
+#  A mammogram or pap smear for females within the last 2 years age 40+ 
+#  OR
+#  A prostate exam for males within the last 2 years age 50+
+#  AND
+#  A colon exam within the last 10 years for males/females age 50+
+#  OR 
+#  A checkup if under 40 within the past 2 years.
+
+good = mepsPrivate %>% filter(
+        # between 40 and 50 male
+        (
+          (AGE15X > 40 & AGE15X <= 50) &
+          (SEX == 1) &
+          (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) 
+        )
+      |
+       # 50+ and male
+        ( 
+          (AGE15X > 50) &
+          (SEX == 1) &
+          (PSA53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+        )
+        
+      |
+        # between 40 and 50 female
+        (
+          (AGE15X > 40 & AGE15X <= 50) &
+          (SEX == 2) &
+          (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs') | MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))
+        )
+      
+      |
+        # 50+ and female
+        (
+          (AGE15X > 50) &
+          (SEX == 2) &
+          (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs') | MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+        )
+      |
+        # 40 and under both sexes
+        (AGE15X <=40) & 
+        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+        (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))
+  ) %>%
+  mutate(behave_bucket = 'Good')
+
+mepsPrivate %>%
+  filter(
+    (
+      (AGE15X > 40) &
+        (SEX == 2) &
+        (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+        (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+        (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+        (AGE15X > 50 & CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+    )
+  ) %>% select(AGE15X, PAPSMR53, MAMOGR53, CLNTST53)
+  
+# Fair Behavior: 
+#  One general checkup (CHECK53) within the last 2 years
+#  AND 
+#  At least one of the following:
+#  - a mammogram or pap smear for females within the last 2 years age 40+ 
+#  - prostate exam for males within the last 2 years age 50+
+#  - a colon exam within the last 10 years for males/females age 50+
+#  - a cholesterol check within the last 2 yrs for males/females 40+
+#  OR 
+#  A checkup within the past 5 years.
+
+fair = mepsPrivate %>% filter(
+  
+    (!DUPERSID %in% good$DUPERSID)  
+  
+  & 
+    
+    ( 
+      # 50+ and male
+      ( 
+        (AGE15X > 50) &
+        (SEX == 1) &
+        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (
+            (PSA53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+          )
+      )
+    
+    |
+    # between 40 and 50 female
+      (
+        (AGE15X > 40 & AGE15X <= 50) &
+        (SEX == 2) &
+        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (
+            (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) 
+          )
+      )
+    
+    |
+      # 50+ and female
+      (
+        (AGE15X > 50) &
+        (SEX == 2) &
+        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+          (
+            (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+            (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+          )
+      )
+    |
+      (
+        # 40 and under both sexes
+        (AGE15X <= 40) &
+        (
+          (CHECK53 %in% c('Within Last 3 Yrs', 'Within Last 5 Yrs')) |
+          (CHOLCK53 %in% c('Within Last 3 Yrs', 'Within Last 5 Yrs'))
+        )
+      )
+    )
+  ) %>% 
+  mutate(behave_bucket = 'Fair')
+
+
+
+# Bad Behavior: 
+#  NO general checkup (CHECK53) in the past 5 years all ages
+#  AND 
+#  NO mammogram or pap smear for females within the last 5 years age 40+ 
+#     or
+#  NO prostate exam for males within the last 5 years age 50+
+#  AND
+#  NO colon exam within the last 10 years for males/females age 50+
+#  AND
+#  NO cholesterol check within the last 2 yrs for males/females age 50+
+
+poor = mepsPrivate %>% filter(
+  
+    (!DUPERSID %in% good$DUPERSID & !DUPERSID %in% fair$DUPERSID)  
+  
+  & 
+    
+    ( 
+      # 50+ and male
+      ( 
+        (AGE15X > 50) &
+        (SEX == 1) &
+        (CHECK53 %in% c('>5 Yrs Ago','Never')) &
+        (PSA53 %in% c('>5 Yrs Ago','Never')) &
+        (CHOLCK53 %in% c('>5 Yrs Ago','Never')) &
+        (CLNTST53 %in% c('>10 Yrs Ago', 'Never'))
+      )
+      
+    |
+      # between 40 and 50 female
+      (
+        (AGE15X > 40 & AGE15X <= 50) &
+        (SEX == 2) &
+        (PAPSMR53 %in% c('>5 Yrs Ago','Never')) &
+        (MAMOGR53 %in% c('>5 Yrs Ago','Never')) &
+        (CHECK53 %in% c('>5 Yrs Ago','Never')) &
+        (CHOLCK53 %in% c('>5 Yrs Ago','Never'))
+      )
+    |
+      # 50+ female
+      (
+        (AGE15X > 40 & AGE15X <= 50) &
+        (SEX == 2) &
+        (PAPSMR53 %in% c('>5 Yrs Ago','Never')) &
+        (MAMOGR53 %in% c('>5 Yrs Ago','Never')) &
+        (CHECK53 %in% c('>5 Yrs Ago','Never')) &
+        (CHOLCK53 %in% c('>5 Yrs Ago','Never')) &
+        (CLNTST53 %in% c('>10 Yrs Ago', 'Never'))
+      )
+    |
+      (
+        (AGE15X <= 40) &
+        (CHECK53 %in% c('>5 Yrs Ago','Never')) &
+        (CHOLCK53 %in% c('>5 Yrs Ago','Never'))
+      )
+    )
+  ) %>%
+  mutate(behave_bucket = 'poor') 
