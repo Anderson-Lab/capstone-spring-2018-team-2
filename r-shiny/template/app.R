@@ -43,7 +43,7 @@ ui <- dashboardPage(
               tabsetPanel(type = "tabs",
                           tabPanel("Gini", plotOutput("hospitilizationPlot")),
                           tabPanel("Cutoff", plotOutput("cutoff")),
-                          tabPanel("ROC", htmlOutput("roc"))
+                          tabPanel("ROC", plotOutput("roc"))
               )
             ),
             box(
@@ -85,7 +85,6 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-  load("data/ranger_imp.rda")
   load("data/behavior_models.rda")
   load("data/meta.rda")
   load("data/confusion_matrices.rda")
@@ -93,6 +92,7 @@ server <- function(input, output) {
   meta_named_char <- c(meta_named_char, age.cat="concatenated age")
   
   output$hospitilizationPlot <- renderPlot({
+    load("data/ranger_imp.rda")
     hosp.imp.dt.top <- arrange(imp.dt,desc(imp))[1:input$hosp_vars, ]
     descriptions = as.data.frame(hosp.imp.dt.top$rn)
     colnames(descriptions) <- c("Predictor")
@@ -105,6 +105,40 @@ server <- function(input, output) {
       xlab('Variables') +
       ylab('Relative Importance') +
       coord_flip()
+  })
+  
+  
+  output$cutoff <- renderPlot({
+    library(ROCR)
+    load('data/ranger_hosp_fit.rda')
+    load('data/ranger_hosp_preds.rda')
+    load('data/ranger_hosp_true.rda')
+    classNames <- c('NoHosp', 'Hosp')
+    levels(y.test)<-classNames
+    colnames(preds.test)<-classNames
+    pred <- prediction( preds.test[,1],  y.test)
+    plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL, main="Optimal Cutoff")
+    par(mar=c(4,4,4,4))
+    par(new=T)
+    plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
+    axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
+    legend(.4, .2, legend=c("Sensitivity", "Specificity"),
+           col=c("red", "blue"), lty=1, cex=0.75, y.intersp= 1.7, x.intersp= .5)
+    
+  })
+  
+  output$roc <- renderPlot({
+    library(ROCR)
+    load('data/ranger_hosp_fit.rda')
+    load('data/ranger_hosp_preds.rda')
+    load('data/ranger_hosp_true.rda')
+    classNames <- c('NoHosp', 'Hosp')
+    levels(y.test)<-classNames
+    colnames(preds.test)<-classNames
+    pred <- prediction( preds.test[,1],  y.test)
+    plot(performance(pred, "tpr" , x.measure = "fpr"), col = 'red', ylab= NULL)
+    abline(0,1)
+    performance(pred, "auc")
   })
   
   output$behaviorPlot <- renderPlot({

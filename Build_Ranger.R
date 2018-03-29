@@ -55,11 +55,14 @@ fit <- ranger(formula = f,
               classification = TRUE,
               sample.fraction = .8)
 
+save(fit, file = "r-shiny/template/data/ranger_hosp_fit.rda")
 
 
 # get model performance metrics
 preds.train <- as.data.frame(predict(fit, train[,predVars])$predictions)
 preds.test <- as.data.frame(predict(fit, x.test)$predictions)
+save(preds.test, file = "r-shiny/template/data/ranger_hosp_preds.rda")
+save(y.test, file = "r-shiny/template/data/ranger_hosp_true.rda")
 classNames <- c('NoHosp', 'Hosp')
 levels(train[,target])<-classNames
 levels(y.test)<-classNames
@@ -84,13 +87,15 @@ twoClassSummary(test.Results, lev = classNames)
 
 library(ROCR)
 ## find the best cut off
-pred <- prediction( preds.train[,1],  train[,target])
+pred <- prediction( preds.test[,1],  y.test)
 
-plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL)
+plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL, main="Optimal Cutoff")
 par(mar=c(4,4,4,4))
 par(new=T)
 plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
 axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
+legend(.5, .9, legend=c("Sensitivity", "Specificity"),
+       col=c("red", "blue"), lty=1, cex=0.8)
 #x<-locator()
 
 
