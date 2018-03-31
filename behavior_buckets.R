@@ -139,20 +139,6 @@ good = mepsPrivate %>% filter(
         (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))
   ) %>%
   mutate(behave_bucket = 'Good')
-
-mepsPrivate %>%
-  filter(
-    (
-      (AGE15X > 40) &
-        (SEX == 2) &
-        (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-        (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-        (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-        (AGE15X > 50 & CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
-    )
-  ) %>% select(AGE15X, PAPSMR53, MAMOGR53, CLNTST53) %>%
-  as_data_frame()
   
 # Fair Behavior: 
 #  One general checkup (CHECK53) within the last 2 years
@@ -243,7 +229,15 @@ poor = mepsPrivate %>% filter(
   
   & 
     
-    ( 
+    (
+      # 40 and 50 male
+      ( 
+        (AGE15X > 40 & AGE15X <= 50) &
+        (SEX == 1) &
+        (CHECK53 %in% c('>5 Yrs Ago','Never')) &
+        (CHOLCK53 %in% c('>5 Yrs Ago','Never')) 
+      )
+    |
       # 50+ and male
       ( 
         (AGE15X > 50) &
@@ -286,4 +280,11 @@ poor = mepsPrivate %>% filter(
   mutate(behave_bucket = 'poor') %>%
   as_data_frame()
 
-buckets = rbind(c(good, fair, poor))
+buckets = rbind(good, fair, poor)
+
+buckets %>%
+  group_by(behave_bucket) %>%
+  summarize(Frequency = n()) %>%
+  ggplot(., aes(x = behave_bucket, y = Frequency)) +
+  geom_bar(stat = "identity", fill = "darkgreen") +
+  ggtitle("Good, Fair, Poor behavior in MEPS (2015)")
