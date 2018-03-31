@@ -80,19 +80,6 @@ for (care in preventive_behaviors){
   print('------------------------------')
 }
 
-# Good Behavior: 
-#  At least one general checkup (CHECK53) within the last 2 years
-#  AND
-#  A cholesterol check within the last 2 yrs all ages
-#  AND 
-#  A mammogram or pap smear for females within the last 2 years age 40+ 
-#  OR
-#  A prostate exam for males within the last 2 years age 50+
-#  AND
-#  A colon exam within the last 10 years for males/females age 50+
-#  OR 
-#  A checkup if under 40 within the past 2 years.
-
 good = mepsPrivate %>% filter(
         # between 40 and 50 male
         (
@@ -139,17 +126,6 @@ good = mepsPrivate %>% filter(
         (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))
   ) %>%
   mutate(behave_bucket = 'Good')
-  
-# Fair Behavior: 
-#  One general checkup (CHECK53) within the last 2 years
-#  AND 
-#  At least one of the following:
-#  - a mammogram or pap smear for females within the last 2 years age 40+ 
-#  - prostate exam for males within the last 2 years age 50+
-#  - a colon exam within the last 10 years for males/females age 50+
-#  - a cholesterol check within the last 2 yrs for males/females 40+
-#  OR 
-#  A checkup within the past 5 years.
 
 fair = mepsPrivate %>% filter(
   
@@ -209,19 +185,6 @@ fair = mepsPrivate %>% filter(
   ) %>% 
   mutate(behave_bucket = 'Fair') %>%
   as_data_frame()
-
-
-
-# Bad Behavior: 
-#  NO general checkup (CHECK53) in the past 5 years all ages
-#  AND 
-#  NO mammogram or pap smear for females within the last 5 years age 40+ 
-#     or
-#  NO prostate exam for males within the last 5 years age 50+
-#  AND
-#  NO colon exam within the last 10 years for males/females age 50+
-#  AND
-#  NO cholesterol check within the last 2 yrs for males/females age 50+
 
 poor = mepsPrivate %>% filter(
   
