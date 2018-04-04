@@ -274,6 +274,8 @@ notFollowAbove60 = mepsPrivate %>% filter(
 #40_60
 count(follow40_60)
 count(notFollow40_60)
+#Percentage
+count(notFollow40_60)/count(follow40_60)*100
 
 buckets40_60 = rbind(follow40_60, notFollow40_60)
 
@@ -290,6 +292,8 @@ buckets40_60 %>%
 #Count of participants
 count(followAbove60)
 count(notFollowAbove60)
+#Percentage
+count(notFollowAbove60)/count(followAbove60)*100
 
 buckets60 = rbind(followAbove60, notFollowAbove60)
 
@@ -298,7 +302,7 @@ buckets60 %>%
   summarize(Frequency = n()) %>%
   ggplot(., aes(x = behave_bucket_above60, y = Frequency)) +
   geom_bar(stat = "identity", fill = "darkgreen") +
-  ggtitle("Those Who Follow AMA Guidelines, Age 40-60 (MEPS 2015)")
+  ggtitle("Those Who Follow AMA Guidelines, Above 60 (MEPS 2015)")
 
 ###################################################################
 
@@ -307,6 +311,8 @@ buckets60 %>%
 #40_60
 count(followUnder40)
 count(notFollowUnder40)
+#Percentage
+count(notFollowUnder40)/count(followUnder40)*100
 
 bucketsUnder40 = rbind(followUnder40, notFollowUnder40)
 
