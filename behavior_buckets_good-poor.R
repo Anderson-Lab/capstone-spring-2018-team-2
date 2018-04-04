@@ -127,69 +127,75 @@ good = mepsPrivate %>% filter(
 ) %>%
   mutate(behave_bucket = 'Good')
 
-fair = mepsPrivate %>% filter(
-  
-  (!DUPERSID %in% good$DUPERSID)  
-  
-  & 
-    
-    ( 
-      # 50+ and male
-      ( 
-        (AGE15X > 50) &
-          (SEX == 1) &
-          (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-          (
-            (PSA53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-              (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-              (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
-          )
-      )
-      
-      |
-        # between 40 and 50 female
-        (
-          (AGE15X > 40 & AGE15X <= 50) &
-            (SEX == 2) &
-            (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-            (
-              (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-                (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-                (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) 
-            )
-        )
-      
-      |
-        # 50+ and female
-        (
-          (AGE15X > 50) &
-            (SEX == 2) &
-            (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
-            (
-              (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-                (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-                (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
-                (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
-            )
-        )
-      |
-        (
-          # 40 and under both sexes
-          (AGE15X <= 40) &
-            (
-              (CHECK53 %in% c('Within Last 3 Yrs', 'Within Last 5 Yrs')) |
-                (CHOLCK53 %in% c('Within Last 3 Yrs', 'Within Last 5 Yrs'))
-            )
-        )
-    )
-) %>% 
-  mutate(behave_bucket = 'Fair') %>%
-  as_data_frame()
+#############################################################################################################################################
+#############################################################################################################################################
+
+# fair = mepsPrivate %>% filter(
+#   
+#   (!DUPERSID %in% good$DUPERSID)  
+#   
+#   & 
+#     
+#     ( 
+#       # 50+ and male
+#       ( 
+#         (AGE15X > 50) &
+#           (SEX == 1) &
+#           (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+#           (
+#             (PSA53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#               (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#               (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+#           )
+#       )
+#       
+#       |
+#         # between 40 and 50 female
+#         (
+#           (AGE15X > 40 & AGE15X <= 50) &
+#             (SEX == 2) &
+#             (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+#             (
+#               (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#                 (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#                 (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) 
+#             )
+#         )
+#       
+#       |
+#         # 50+ and female
+#         (
+#           (AGE15X > 50) &
+#             (SEX == 2) &
+#             (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
+#             (
+#               (PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#                 (MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#                 (CHOLCK53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) |
+#                 (CLNTST53 %in% c('Within Last 10 Yrs', 'Within Last 5 Yrs', 'Within Last 3 Yrs', 'Within Last 2 Yrs', 'Within Last Yr'))
+#             )
+#         )
+#       |
+#         (
+#           # 40 and under both sexes
+#           (AGE15X <= 40) &
+#             (
+#               (CHECK53 %in% c('Within Last 3 Yrs', 'Within Last 5 Yrs')) |
+#                 (CHOLCK53 %in% c('Within Last 3 Yrs', 'Within Last 5 Yrs'))
+#             )
+#         )
+#     )
+# ) %>% 
+#   mutate(behave_bucket = 'Fair') %>%
+#   as_data_frame()
+
+#############################################################################################################################################
+#############################################################################################################################################
+
 
 poor = mepsPrivate %>% filter(
   
-  (!DUPERSID %in% good$DUPERSID & !DUPERSID %in% fair$DUPERSID)  
-  
+  (!DUPERSID %in% good$DUPERSID)
   & 
     
     (
@@ -243,7 +249,7 @@ poor = mepsPrivate %>% filter(
   mutate(behave_bucket = 'poor') %>%
   as_data_frame()
 
-buckets = rbind(good, fair, poor)
+buckets = rbind(good, poor)
 
 buckets %>%
   group_by(behave_bucket) %>%

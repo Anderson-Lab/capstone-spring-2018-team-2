@@ -80,8 +80,9 @@ for (care in preventive_behaviors){
   print('------------------------------')
 }
 
-good = mepsPrivate %>% filter(
-  # between 40 and 60 male
+#between 40 and 60 
+follow40_60 = mepsPrivate %>% filter(
+  # male
   (
     (AGE15X > 40 & AGE15X <= 60) &
       (SEX == 1) &
@@ -90,7 +91,20 @@ good = mepsPrivate %>% filter(
        
   )
   |
-    # 60+ and male
+  #female
+  (
+      (AGE15X > 40 & AGE15X <= 60) &
+        (SEX == 2) &
+        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))& 
+        ((PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs') &
+        MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))) 
+    ))%>%
+  mutate(behave_bucket_40_60 = 'Follow') %>%
+  as_data_frame()
+
+#60+
+followAbove60 = mepsPrivate %>% filter(
+    #Male
     ( 
       (AGE15X > 60) &
         (SEX == 1) &
@@ -99,20 +113,8 @@ good = mepsPrivate %>% filter(
         ((PSA53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
         (CLNTST53 %in% c('Within Last 10 Yrs')))
     )
-  
-  |
-    # between 40 and 60 female
-    (
-      (AGE15X > 40 & AGE15X <= 60) &
-        (SEX == 2) &
-        (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))& 
-        
-        ((PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs') &
-           MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))) 
-    )
-  
-  |
-    # 60+ and female
+    |
+    #Female
     (
       (AGE15X > 60) &
         (SEX == 2) &
@@ -120,13 +122,18 @@ good = mepsPrivate %>% filter(
         ((PAPSMR53 %in% c('Within Last Yr', 'Within Last 2 Yrs') & 
           MAMOGR53 %in% c('Within Last Yr', 'Within Last 2 Yrs')) &
         CLNTST53 %in% c('Within Last 10 Yrs'))
-    )
-  |
-  #40 and under both sexes
-  (AGE15X <=40) &
-  (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))
+    ))%>%
+    mutate(behave_bucket_above60 = 'Follow') %>%
+    as_data_frame()
+   
+#Under40  
+followUnder40 = mepsPrivate %>% filter(
+    #40 and under both sexes
+    (AGE15X <=40) &
+    (CHECK53 %in% c('Within Last Yr', 'Within Last 2 Yrs'))
 ) %>%
-  mutate(behave_bucket = 'Good')
+    mutate(behave_bucket_under40 = 'Follow') %>%
+    as_data_frame()
 
 #############################################################################################################################################
 #############################################################################################################################################
@@ -193,21 +200,37 @@ good = mepsPrivate %>% filter(
 #############################################################################################################################################
 #############################################################################################################################################
 
-
-poor = mepsPrivate %>% filter(
-  
-  # (!DUPERSID %in% good$DUPERSID)
-  # & 
+#Not Follow Buckets
+#Ages40_60
+  notFollow40_60 = mepsPrivate %>% filter(
+  (!DUPERSID %in% good$DUPERSID)
+  &
     
     (
       # 40 to 60 male
       ( 
         (AGE15X > 40 & AGE15X <= 60) &
           (SEX == 1) &
-          (CHECK53 %in% c('>5 Yrs Ago','Never'))  
+          (CHECK53 %in% c('>5 Yrs Ago','Never')) #Physical  
       )
       |
-        # 60+ and male
+        # between 40 and 60 female
+        (
+          (AGE15X > 40 & AGE15X <= 60) &
+          (SEX == 2) &
+          (CHECK53 %in% c('>5 Yrs Ago','Never')) & #Physical
+          ((PAPSMR53 %in% c('>5 Yrs Ago','Never')) | #Pap smear
+          (MAMOGR53 %in% c('>5 Yrs Ago','Never'))) #Mammogram
+        )
+      )
+  )%>%
+    mutate(behave_bucket_40_60 = 'Not Follow') %>%
+    as_data_frame()
+
+#AgesAbove60
+notFollowAbove60 = mepsPrivate %>% filter(
+  (!DUPERSID %in% good$DUPERSID)&
+    # 60+ and male
         ( 
           (AGE15X > 60) &
             (SEX == 1) &
@@ -215,18 +238,6 @@ poor = mepsPrivate %>% filter(
             ((PSA53 %in% c('>5 Yrs Ago','Never'))  |
             (CLNTST53 %in% c('>10 Yrs Ago', 'Never')))
         )
-      
-      |
-        # between 40 and 60 female
-        (
-          (AGE15X > 40 & AGE15X <= 60) &
-            (SEX == 2) &
-            (CHECK53 %in% c('>5 Yrs Ago','Never'))&
-            
-            ((PAPSMR53 %in% c('>5 Yrs Ago','Never')) |
-            (MAMOGR53 %in% c('>5 Yrs Ago','Never')))
-             
-                    )
       |
         # 60+ female
         (
@@ -237,27 +248,71 @@ poor = mepsPrivate %>% filter(
             (MAMOGR53 %in% c('>5 Yrs Ago','Never')) |
             (CLNTST53 %in% c('>10 Yrs Ago', 'Never')))
         )
-      |
+  )%>%
+  mutate(behave_bucket_above60 = 'Not Follow') %>%
+  as_data_frame()
+
+#Under40
+  notFollowUnder40 = mepsPrivate %>% filter(
+  (!DUPERSID %in% good$DUPERSID)
+  &
         #Under 40 Both Sexes
         (
           (AGE15X <= 40) &
             (CHECK53 %in% c('>5 Yrs Ago','Never'))
 
         )
-    )
-) %>%
-  mutate(behave_bucket = 'poor') %>%
+    ) %>%
+  mutate(behave_bucket_under40 = 'Not Follow') %>%
   as_data_frame()
 
+####################################################
+####################################################
+  
+#For 40_60
 #Count of participants
-count(good)
-count(poor)
+#40_60
+count(follow40_60)
+count(notFollow40_60)
 
-buckets = rbind(good, poor)
+buckets40_60 = rbind(follow40_60, notFollow40_60)
 
-buckets %>%
-  group_by(behave_bucket) %>%
+buckets40_60 %>%
+  group_by(behave_bucket_40_60) %>%
   summarize(Frequency = n()) %>%
-  ggplot(., aes(x = behave_bucket, y = Frequency)) +
+  ggplot(., aes(x = behave_bucket_40_60, y = Frequency)) +
   geom_bar(stat = "identity", fill = "darkgreen") +
-  ggtitle("Good, Fair, Poor behavior in MEPS (2015)")
+  ggtitle("Those Who Follow AMA Guidelines, Age 40-60 (MEPS 2015)")
+
+###################################################################
+
+#For Over60
+#Count of participants
+count(followAbove60)
+count(notFollowAbove60)
+
+buckets60 = rbind(followAbove60, notFollowAbove60)
+
+buckets60 %>%
+  group_by(behave_bucket_above60) %>%
+  summarize(Frequency = n()) %>%
+  ggplot(., aes(x = behave_bucket_above60, y = Frequency)) +
+  geom_bar(stat = "identity", fill = "darkgreen") +
+  ggtitle("Those Who Follow AMA Guidelines, Age 40-60 (MEPS 2015)")
+
+###################################################################
+
+#For Under 40
+#Count of participants
+#40_60
+count(followUnder40)
+count(notFollowUnder40)
+
+bucketsUnder40 = rbind(followUnder40, notFollowUnder40)
+
+bucketsUnder40 %>%
+  group_by(behave_bucket_under40) %>%
+  summarize(Frequency = n()) %>%
+  ggplot(., aes(x = behave_bucket_under40, y = Frequency)) +
+  geom_bar(stat = "identity", fill = "darkgreen") +
+  ggtitle("Those Who Follow AMA Guidelines, Age Under 40 (MEPS 2015)")
