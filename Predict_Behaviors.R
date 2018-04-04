@@ -19,7 +19,6 @@ behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR
                'BRSTEX53', 'MAMOGR53', 'CLNTST53')
 controls <- c('PHOLDER', 'CHBMIX42','BMINDX53','ADGENH42', 'age.cat', 'FAMINC15', 
               'COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
-weights <- 'PERWT15F'
 vars <- c(plan.dsn, behaviors, controls)
 predVars <- c(plan.dsn, controls)
 factors <- c(plan.dsn, behaviors, 'PHOLDER','CHBMIX42', 'ADGENH42','COBRA', 

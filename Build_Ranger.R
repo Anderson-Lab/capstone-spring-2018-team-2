@@ -11,6 +11,9 @@ mepsPublic<-Public_Filter(meps.p)
 mepsPrivate<-Private_Filter(meps.p)
 
 # Get vars
+mepsPrivate <- mepsPrivate[mepsPrivate$AGE15X > 40,]
+mepsPrivate$w <- mepsPrivate$IPDIS15
+mepsPrivate[mepsPrivate$w<1, 'w']<- .3
 mepsPrivate$age.cat <- Age.to.Cat(mepsPrivate, 'AGE15X')
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
 behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 
@@ -18,11 +21,11 @@ behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR
 controls <- c('PHOLDER', 'CHBMIX42','BMINDX53','ADGENH42', 'age.cat', 'FAMINC15', 
               'COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
 target <- 'IPDIS15'
-weights <- 'PERWT15F'
+weights <- 'w'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
-factors <- c('IPDIS15', 'HOSPINSX', 'PLANMETL', 'HSAACCT', behaviors, 'PHOLDER',
-             'CHBMIX42', 'ADGENH42','COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
+ordered <- c('PLANMETL', 'ADGENH42', 'age.cat')
+factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT', behaviors,'COBRA', 'PREGNT53')
 
 #Set target to binary
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
@@ -30,11 +33,14 @@ mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
 #Coerce to fewer factors
 mepsPrivate$ANNDEDCT <- as.numeric(mepsPrivate$ANNDEDCT)
 for(variable in c(plan.dsn, behaviors)){
-  mepsPrivate[mepsPrivate[,variable] < 0, variable] <- "Unknown"
+  mepsPrivate[mepsPrivate[,variable] < 0, variable] <- 0
 }
 
 for(factor in factors){
   mepsPrivate[,factor] <- as.factor(mepsPrivate[, factor])
+}
+for(factor in ordered){
+  mepsPrivate[,factor] <- as.ordered(mepsPrivate[, factor])
 }
 
 #split
@@ -43,17 +49,17 @@ train <- mepsPrivate[trainidx,vars]
 y.test <- mepsPrivate[-trainidx,target]
 x.test <- mepsPrivate[-trainidx,-which(names(meps) == target)]
 
-ds <- downSample(train, train[,target], list = FALSE)
+#ds <- downSample(train, train[,target], list = FALSE)
 f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
 fit <- ranger(formula = f,
-              data = ds,
-              #case.weights = w,
-              num.trees = 50,
+              data = train,
+              case.weights = train$w,
+              num.trees = 250,
               importance = 'impurity',
-              min.node.size = 30,
+              min.node.size = 150,
               probability = TRUE,
               classification = TRUE,
-              sample.fraction = .8)
+              sample.fraction = .7)
 
 save(fit, file = "r-shiny/template/data/ranger_hosp_fit.rda")
 
@@ -69,7 +75,7 @@ levels(y.test)<-classNames
 
 colnames(preds.train)<-classNames
 colnames(preds.test)<-classNames
-cutOff = .5
+cutOff = .75
 train.Results<-data.frame(preds.train, 
                           obs = train[,target],
                           pred = ifelse(preds.train[,classNames[1]] < cutOff, classNames[1], classNames[2]))
@@ -94,7 +100,7 @@ par(mar=c(4,4,4,4))
 par(new=T)
 plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
 axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
-legend(.5, .9, legend=c("Sensitivity", "Specificity"),
+legend(.3, .9, legend=c("Sensitivity", "Specificity"),
        col=c("red", "blue"), lty=1, cex=0.8)
 #x<-locator()
 

@@ -2,6 +2,7 @@ library(caret)
 source("Join_Data.R")
 load('mepsBehaviorBucket.rda')
 
+buckets <- droplevels(buckets[buckets$AGE15X >= 40,])
 buckets$w <- buckets$IPDIS15
 buckets[buckets$w<1, 'w']<- 1
 
@@ -19,13 +20,12 @@ target <- 'IPDIS15'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
 
-factors <- c('IPDIS15', 'ANNDEDCT' ,'PLANMETL', 'HSAACCT', 'ADGENH42','COBRA',
-             'PREGNT31', 'PREGNT42', 'PREGNT53')
+factors <- c('IPDIS15', 'ANNDEDCT' ,'PLANMETL', 'HSAACCT', 'ADGENH42','COBRA','PREGNT53')
 buckets[buckets$OOPPREM < 0, 'OOPPREM'] <- 0
 
 
 for(variable in c(plan.dsn, controls[-3])){
-  buckets[buckets[,variable] < 0, variable] <- 0
+  buckets[buckets[,variable] < 0, variable] <- NA
 }
 
 td <- buckets[,c(predVars, target, weights)]
