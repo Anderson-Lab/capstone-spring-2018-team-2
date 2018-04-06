@@ -122,7 +122,7 @@ server <- function(input, output) {
     par(new=T)
     plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
     axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
-    legend(.4, .2, legend=c("Sensitivity", "Specificity"),
+    legend(.3, .8, legend=c("Sensitivity", "Specificity"),
            col=c("red", "blue"), lty=1, cex=0.75, y.intersp= 1.7, x.intersp= .5)
     
   })
