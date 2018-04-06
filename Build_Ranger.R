@@ -24,8 +24,8 @@ target <- 'IPDIS15'
 weights <- 'w'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
-ordered <- c('PLANMETL', 'ADGENH42', 'age.cat')
-factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT', behaviors,'COBRA', 'PREGNT53')
+ordered <- c('PLANMETL', 'ADGENH42', 'age.cat', behaviors)
+factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53')
 
 #Set target to binary
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
