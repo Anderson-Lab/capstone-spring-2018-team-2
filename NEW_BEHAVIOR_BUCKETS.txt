@@ -1,0 +1,42 @@
+
+Behavior Buckets
+
+* Male between 40 & 60
+
+poor vs good hospitalizations
+  * General checkup
+  * Prostate exam
+
+  FOLLOW if you satisfy everything above within last 2 yrs (also test within 1 year)
+  DON’T FOLLOW if you haven’t had a single test within last 5 yrs
+
+* Male 60+
+  * (Male between 40 & 50)
+  * Prostate exam
+  * Colonoscopy
+		
+  FOLLOW if you had a general checkup within last 2 yrs and at least a prostate exam or a (colonoscopy within 10 yrs) (If you’re 51 you might not have a colonoscopy within last 10)
+  DON’T FOLLOW if you haven’t had a single test within last 5 yrs (no colonoscopy within 10 yrs) 
+	
+* Female between 40 & 60
+  * General checkup
+  * Pap smear 
+  * Mammogram
+
+  FOLLOW if you had a checkup within last 2 years, and you had at least one other test(Pap Smear, Mammogram)
+  DON’T FOLLOW if you haven’t had a single test within last 5 yrs 
+	
+* Female 60+
+  * (Everything Female between 40 & 60)
+  * Colonoscopy
+
+  FOLLOW if you had a general checkup, pap smear, and mammogram within last 2 yrs, colonoscopy (within 10 years)
+  DON’T FOLLOW if you haven’t had a single test within last 5 yrs (colonoscopy within 10 yrs) 
+
+* M/F under 40
+  * General checkup
+
+  FOLLOW if you had general checkup within last 2 yrs
+  DON’T FOLLOW if you haven’t had a general checkup within last 5 yrs
+
+
