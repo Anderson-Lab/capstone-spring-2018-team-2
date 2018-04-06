@@ -24,8 +24,8 @@ target <- 'IPDIS15'
 weights <- 'w'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
-ordered <- c('PLANMETL', 'ADGENH42', 'age.cat')
-factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT', behaviors,'COBRA', 'PREGNT53')
+ordered <- c('PLANMETL', 'ADGENH42', 'age.cat', behaviors)
+factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53')
 
 #Set target to binary
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
@@ -54,7 +54,7 @@ f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
 fit <- ranger(formula = f,
               data = train,
               case.weights = train$w,
-              num.trees = 250,
+              num.trees = 2500,
               importance = 'impurity',
               min.node.size = 150,
               probability = TRUE,
@@ -75,7 +75,7 @@ levels(y.test)<-classNames
 
 colnames(preds.train)<-classNames
 colnames(preds.test)<-classNames
-cutOff = .75
+cutOff = .7
 train.Results<-data.frame(preds.train, 
                           obs = train[,target],
                           pred = ifelse(preds.train[,classNames[1]] < cutOff, classNames[1], classNames[2]))
@@ -93,7 +93,7 @@ twoClassSummary(test.Results, lev = classNames)
 
 library(ROCR)
 ## find the best cut off
-pred <- prediction( preds.test[,1],  y.test)
+pred <- prediction( preds.train[,1],  train[,target])
 
 plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL, main="Optimal Cutoff")
 par(mar=c(4,4,4,4))
