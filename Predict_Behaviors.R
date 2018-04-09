@@ -13,16 +13,21 @@ mepsPublic<-Public_Filter(meps.p)
 mepsPrivate<-Private_Filter(meps.p)
 
 # Get vars
+mepsPrivate <- mepsPrivate[mepsPrivate$AGE15X > 40,]
+mepsPrivate$w <- mepsPrivate$IPDIS15
+mepsPrivate[mepsPrivate$w<1, 'w']<- .3
 mepsPrivate$age.cat <- Age.to.Cat(mepsPrivate, 'AGE15X')
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
 behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 
                'BRSTEX53', 'MAMOGR53', 'CLNTST53')
 controls <- c('PHOLDER', 'CHBMIX42','BMINDX53','ADGENH42', 'age.cat', 'FAMINC15', 
               'COBRA', 'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
-vars <- c(plan.dsn, behaviors, controls)
+weights <- 'w'
+ordered <- c('PLANMETL', 'ADGENH42', 'age.cat')
+factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53', behaviors)
+
+vars <- c(plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, controls)
-factors <- c(plan.dsn, behaviors, 'PHOLDER','CHBMIX42', 'ADGENH42','COBRA', 
-             'OOPPREM', 'PREGNT31', 'PREGNT42', 'PREGNT53')
 
 behavior_models = vector("list", length(behaviors))
 confusion_matrices = vector("list", length(behaviors))
@@ -50,13 +55,13 @@ for(target in behaviors){
   f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
   fit <- ranger(formula = f,
                 data = train,
-                #case.weights = w,
-                num.trees = 50,
+                case.weights = train$w,
+                num.trees = 500,
                 importance = 'impurity',
-                min.node.size = 30,
+                min.node.size = 75,
                 probability = TRUE,
                 classification = TRUE,
-                sample.fraction = .8)
+                sample.fraction = .7)
   
   
   
