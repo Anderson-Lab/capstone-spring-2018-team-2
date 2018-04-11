@@ -1,8 +1,8 @@
 library(dplyr)
 
 Join_MEPS <- function(year){
-  prp_file = sprintf('prp_full%s.rda', year)
-  fyc_file = sprintf('fyc_full%s.rda', year)
+  prp_file = sprintf('raw_data/prp_full%s.rda', year)
+  fyc_file = sprintf('raw_data/fyc_full%s.rda', year)
   load(prp_file)
   prp <- rd
   load(fyc_file)
