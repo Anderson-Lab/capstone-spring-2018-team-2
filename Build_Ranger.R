@@ -4,17 +4,8 @@ library(dplyr)
 source("Join_Data.R")
 load('meta.rda')
 
-# Get data
-meps <- Join_MEPS()
-meps.p <- meps[meps$PHOLDER == 1,]
-mepsPublic<-Public_Filter(meps.p)
-mepsPrivate<-Private_Filter(meps.p)
+#  ------------- Initialize variables we are interested in for modeling -------------
 
-# Get vars
-mepsPrivate <- mepsPrivate[mepsPrivate$AGE15X > 40,]
-mepsPrivate$w <- mepsPrivate$IPDIS15
-mepsPrivate[mepsPrivate$w<1, 'w']<- .3
-mepsPrivate$age.cat <- Age.to.Cat(mepsPrivate, 'AGE15X')
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
 behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 
                'BRSTEX53', 'MAMOGR53', 'CLNTST53')
@@ -24,8 +15,22 @@ target <- 'IPDIS15'
 weights <- 'w'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
-ordered <- c('PLANMETL', 'ADGENH42', 'age.cat', behaviors)
+ordered <- c('PLANMETL','ADGENH42', 'age.cat', behaviors)
 factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53')
+
+# ------------- Gather data for modeling -------------
+
+meps.2015 <- Join_MEPS(2015)
+meps.2014 <- Join_MEPS(2014)
+meps.2013 <- Join_MEPS(2013)
+
+# mepsPrivate <- Combine_MEPS_Years(meps.2015, 
+#                          meps.2014, 
+#                          meps.2013, 
+#                          join_vars = vars[!vars %in% 'PLANMETL'])
+
+mepsPrivate <- Filter_MEPS_2015(meps.2015, vars = vars)
+
 
 #Set target to binary
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
@@ -47,7 +52,7 @@ for(factor in ordered){
 trainidx <- createDataPartition(mepsPrivate$IPDIS15, p=.8, list = FALSE)
 train <- mepsPrivate[trainidx,vars]
 y.test <- mepsPrivate[-trainidx,target]
-x.test <- mepsPrivate[-trainidx,-which(names(meps) == target)]
+x.test <- mepsPrivate[-trainidx,-which(names(mepsPrivate) == target)]
 
 #ds <- downSample(train, train[,target], list = FALSE)
 f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))

@@ -53,6 +53,51 @@ Private_Filter <- function(df, yr_ending){
   return(dfPrivate)
 }
 
+Filter_MEPS_2015 <- function(df15, vars){
+  mepsPrivate.2015<-Private_Filter(df15, 15)
+  mepsPrivate.2015 <- mepsPrivate.2015[mepsPrivate.2015$AGE15X > 40,]
+  mepsPrivate.2015$age.cat <- Age.to.Cat(mepsPrivate.2015, 'AGE15X')
+  mepsPrivate.2015$w <- mepsPrivate.2015$IPDIS15
+  mepsPrivate.2015[mepsPrivate.2015$w<1, 'w']<- .3
+  
+  return(mepsPrivate.2015[,vars])
+}
+
+Combine_MEPS_Years <- function(df15, df14, df13, join_vars){
+  # If we want to add more years, we need to uses the ellipsis ... in the function
+  # arguments and loop through each dataframe.
+  mepsPrivate.2015<-Private_Filter(df15, 15)
+  mepsPrivate.2014<-Private_Filter(df14, 14)
+  mepsPrivate.2013<-Private_Filter(df13, 13)
+  # Get vars
+  mepsPrivate.2015 <- mepsPrivate.2015[mepsPrivate.2015$AGE15X > 40,]
+  mepsPrivate.2014 <- mepsPrivate.2014[mepsPrivate.2014$AGE14X > 40,]
+  mepsPrivate.2013 <- mepsPrivate.2013[mepsPrivate.2013$AGE13X > 40,]
+  
+  mepsPrivate.2015$w <- mepsPrivate.2015$IPDIS15
+  mepsPrivate.2014$w <- mepsPrivate.2014$IPDIS14
+  mepsPrivate.2013$w <- mepsPrivate.2013$IPDIS13
+  
+  mepsPrivate.2014$IPDIS15 <- mepsPrivate.2014$IPDIS14
+  mepsPrivate.2013$IPDIS15 <- mepsPrivate.2013$IPDIS13
+  
+  mepsPrivate.2015[mepsPrivate.2015$w<1, 'w']<- .3
+  mepsPrivate.2014[mepsPrivate.2014$w<1, 'w']<- .3
+  mepsPrivate.2013[mepsPrivate.2013$w<1, 'w']<- .3
+  
+  mepsPrivate.2015$age.cat <- Age.to.Cat(mepsPrivate.2015, 'AGE15X')
+  mepsPrivate.2014$age.cat <- Age.to.Cat(mepsPrivate.2014, 'AGE14X')
+  mepsPrivate.2013$age.cat <- Age.to.Cat(mepsPrivate.2013, 'AGE13X')
+  
+  mepsPrivate.2014$FAMINC15 = mepsPrivate.2014$FAMINC14
+  mepsPrivate.2013$FAMINC15 = mepsPrivate.2013$FAMINC13
+  
+  
+  mepsPrivate.allyrs <- do.call("rbind", list(mepsPrivate.2015[,join_vars], mepsPrivate.2014[,join_vars], mepsPrivate.2013[,join_vars]))
+  
+  return (mepsPrivate.allyrs)
+}
+
 # to use: df$age.cat <- age.to.cat(df, 'age')
 Age.to.Cat <- function(df, Age.col){
   levs <- c('Unknown', 'less than 12', '12-17', '18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75 and over')
