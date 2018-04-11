@@ -10,9 +10,9 @@ buckets$IPDIS15[buckets$IPDIS15>1] <- 1
 buckets$behave_bucket <- as.factor(buckets$behave_bucket)
 buckets$ANNDEDCT <- as.numeric(buckets$ANNDEDCT)
 buckets$age.cat <- Age.to.Cat(buckets, 'AGE15X')
-plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL', 'OOPPREM')
-controls <- c('BMINDX53','ADGENH42', 'age.cat', 'FAMINC15', 
-              'COBRA', 'PREGNT31', 'PREGNT42', 'PREGNT53')
+plan.dsn <- c('ANNDEDCT', 'HSAACCT', 'PLANMETL', 'OOPPREM')
+controls <- c('age.cat', 'FAMINC15', 'SEX',
+              'COBRA')
 weights <- 'w'
 behaviors <- 'behave_bucket'
 target <- 'IPDIS15'
@@ -20,12 +20,13 @@ target <- 'IPDIS15'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
 
-factors <- c('IPDIS15', 'ANNDEDCT' ,'PLANMETL', 'HSAACCT', 'ADGENH42','COBRA','PREGNT53')
+factors <- c('IPDIS15', 'ANNDEDCT' ,'PLANMETL', 'HSAACCT', 'COBRA')
 buckets[buckets$OOPPREM < 0, 'OOPPREM'] <- 0
 
 
-for(variable in c(plan.dsn, controls[-3])){
-  buckets[buckets[,variable] < 0, variable] <- NA
+for(variable in c(plan.dsn[-c(2,3)], controls[-1])){
+  print(variable)
+  buckets[buckets[,variable] < 0, variable] <- 0
 }
 
 td <- buckets[,c(predVars, target, weights)]
@@ -38,6 +39,17 @@ trainidx <- createDataPartition(td$IPDIS15, p=.8, list = FALSE)
 train <- td[trainidx,vars]
 y.test <- td[-trainidx,target]
 x.test <- td[-trainidx,-which(names(td) == target)]
+
+ds <- downSample(train, train[,target], list = FALSE)
+f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
+lin.model <- glm(f,family=binomial(link='logit'),data=train, weights = train$w)
+
+lin.model.ds <- glm(f,family=binomial(link='logit'),data=ds, weights = ds$w)
+
+
+# predict buckets
+predVars <- c(plan.dsn, controls)
+target <- 'behave_bucket'
 
 ds <- downSample(train, train[,target], list = FALSE)
 f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
