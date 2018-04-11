@@ -1,7 +1,7 @@
 library(caret)
 library(ranger)
 source("Join_Data.R")
-load('mepsBehaviorBucket.rda')
+load('rda_data/mepsBehaviorBuckets.rda')
 
 buckets <- droplevels(buckets[buckets$AGE15X >= 40,])
 buckets$w <- buckets$IPDIS15

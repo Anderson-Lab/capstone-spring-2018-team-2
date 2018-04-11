@@ -4,16 +4,14 @@ library(dplyr)
 library(data.table)
 library(ggplot2)
 source("Join_Data.R")
-load('meta.rda')
+load('rda_data/meta.rda')
 
 
 # Get data
 meps.2015 <- Join_MEPS(2015)
-mepsPublic.2015<-Public_Filter(meps.2015, 15)
 mepsPrivate.2015 <-Private_Filter(meps.2015, 15)
 
 meps.2014 <- Join_MEPS(2014)
-mepsPublic.2014 <- Public_Filter(meps.2014, 14)
 mepsPrivate.2014 <- Private_Filter(meps.2014, 14)
 
 # Get vars
@@ -73,15 +71,15 @@ add.pv.field('SGMTST53', map.time.since.ext)
 
 add.pv.field('FLUSHT53', map.time.since.ext)
 
-for (care in preventive_behaviors){
-  print(meta_named_char[care])
-  careCnt = mepsPrivate.2015 %>%
-    group_by(mepsPrivate.2015[,care]) %>%
-    count()
-  
-  print(careCnt)
-  print('------------------------------')
-}
+# for (care in preventive_behaviors){
+#   print(meta_named_char[care])
+#   careCnt = mepsPrivate.2015 %>%
+#     group_by(mepsPrivate.2015[,care]) %>%
+#     count()
+#   
+#   print(careCnt)
+#   print('------------------------------')
+# }
 
 # https://www.cdc.gov/prevention/
 
@@ -203,6 +201,7 @@ not_follow = mepsPrivate.2015 %>% filter(
 
 
 buckets = rbind(follow, not_follow)
+save(buckets, file="rda_data/mepsBehaviorBuckets.rda")
 
 ####################################################
 ####################################################
@@ -217,37 +216,5 @@ buckets %>%
 
 ###################################################################
 
-#For Over60
-#Count of participants
-count(followAbove60)
-count(notFollowAbove60)
-#Percentage
-count(notFollowAbove60)/count(followAbove60)*100
 
-buckets60 = rbind(followAbove60, notFollowAbove60)
 
-buckets60 %>%
-  group_by(behave_bucket_above60) %>%
-  summarize(Frequency = n()) %>%
-  ggplot(., aes(x = behave_bucket_above60, y = Frequency)) +
-  geom_bar(stat = "identity", fill = "darkgreen") +
-  ggtitle("Those Who Follow AMA Guidelines, Above 60 (MEPS 2015)")
-
-###################################################################
-
-#For Under 40
-#Count of participants
-#40_60
-count(followUnder40)
-count(notFollowUnder40)
-#Percentage
-count(notFollowUnder40)/count(followUnder40)*100
-
-bucketsUnder40 = rbind(followUnder40, notFollowUnder40)
-
-bucketsUnder40 %>%
-  group_by(behave_bucket_under40) %>%
-  summarize(Frequency = n()) %>%
-  ggplot(., aes(x = behave_bucket_under40, y = Frequency)) +
-  geom_bar(stat = "identity", fill = "darkgreen") +
-  ggtitle("Those Who Follow AMA Guidelines, Age Under 40 (MEPS 2015)")
