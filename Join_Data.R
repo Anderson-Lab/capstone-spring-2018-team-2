@@ -36,7 +36,15 @@ Public_Filter <- function(df, year){
   return(dfPublic)
 }
 
-Private_Filter <- function(df, yr_ending){
+Pri_Filter <- function(df, year){
+  dfPublic <- filter(df, PRIJA15X==1,PRIFE15X==1,PRIMA15X ==1,
+                     PRIAP15X==1,PRIMY15X==1,PRIJU15X==1,
+                     PRIJL15X==1,PRIAU15X==1,PRISE15X==1,
+                     PRIOC15X==1,PRINO15X==1,PRIDE15X==1)
+  return(dfPrivate)
+}
+
+Private_Filter_Uni <- function(df, yr_ending){
   dfPrivate <- filter(df, 
                       df[,sprintf('PRIJA%s', yr_ending)]==1,
                       df[,sprintf('PRIFE%s', yr_ending)]==1,
