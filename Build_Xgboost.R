@@ -44,31 +44,32 @@ dummies <- dummyVars(~ age.cat, data = mepsPrivate)
 ohe <- as.data.frame(predict(dummies, newdata = mepsPrivate))
 ohe_combined <- cbind(mepsPrivate[,-c(which(colnames(mepsPrivate) %in% ohe_feats))],ohe)
 
-#ds <- downSample(train, train[,target], list = FALSE)
-
 trainidx <- createDataPartition(ohe_combined$IPDIS15, p=.8, list = FALSE)
 all_train <- ohe_combined[trainidx,]
 ds <- downSample(all_train, all_train[,target], list = FALSE)
 train.y.ds <- ds[,target]
 train.y.ds <- as.numeric(levels(train.y.ds))[train.y.ds]
-train.x.ds <- ds[,-which(names(ds) %in% c(target, 'Class'))]
+train.x.ds <- ds[,-which(names(ds) %in% c(target, 'Class', 'w'))]
+train.ds.weights <- ds[,'w']
 train.y <- ohe_combined[trainidx, target]
 train.y <- as.numeric(levels(train.y))[train.y]
-train.x <- ohe_combined[trainidx,-which(names(ohe_combined) == target)]
+train.x <- ohe_combined[trainidx,-which(names(ohe_combined) %in% c(target, 'w'))]
+train.weights <- ohe_combined[trainidx, 'w']
 test.y <- ohe_combined[-trainidx,target]
 test.y <- as.numeric(levels(test.y))[test.y]
-test.x <- ohe_combined[-trainidx,-which(names(ohe_combined) == target)]
+test.x <- ohe_combined[-trainidx,-which(names(ohe_combined) %in% c(target, 'w'))]
 
 #-------------- xgboost non-downsampled  ---------------------------------
 
 xgb <- xgboost(data = data.matrix(train.x),
-                  label = train.y,
-                  max.depth = 2,
-                  eta = 1,
-                  nthread = 2,
-                  nround = 2,
-                  objective = "binary:logistic",
-                  verbose = 2)
+              label = train.y,
+              # weight = train.weights,
+              max.depth = 2,
+              eta = 1,
+              nthread = 2,
+              nround = 2,
+              objective = "binary:logistic",
+              verbose = 2)
 
 preds.test <- predict(xgb, data.matrix(test.x))
 test.Results<-data.frame(obs = test.y,
@@ -83,11 +84,11 @@ print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 xgb.ds <- xgboost(data = data.matrix(train.x.ds),
                label = train.y.ds,
-               weight = 
-               max.depth = 3,
+               # weight = train.ds.weights,
+               max.depth = 2,
                eta = 1,
                nthread = 2,
-               nround = 4,
+               nround = 5,
                objective = "binary:logistic",
                verbose = 2)
 
