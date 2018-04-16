@@ -29,27 +29,40 @@ ui <- dashboardPage(
       tabItem(tabName = "hospitilization", class = "active",
         fluidRow(
           column(width=5,
-            box(
-              width=NULL, # needs to be set to null when using column layout
-              sliderInput("hosp_vars", "Importance variables to show: ",min = 1, max = 15, value = 10)
-            ),
-            box(
-              width=NULL,
-              div(dataTableOutput("hosp_descriptions"), style = "font-size:80%")
-            )
+              box(
+                width=NULL,
+                title = "Target: IPDIS15X (Inpatient Hospitalizations)",
+                solidHeader = TRUE, 
+                status = "primary",
+                checkboxGroupInput("planDesignVars", label = h4("Plan Design Variables"), 
+                                   choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
+                                   selected = 1),
+                checkboxGroupInput("behaviorVars", label = h4("Behavior Variables"), 
+                                   choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
+                                   selected = 1),
+                checkboxGroupInput("controlVars", label = h4("Control Variables"), 
+                                   choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
+                                   selected = 1),
+                hr(),
+                actionButton("makeModel", "Generate Model")
+  
+              )
           ),
           column(width=7,
             box(
               width=NULL,
+              solidHeader = TRUE, 
+              status = "primary",
               tabsetPanel(type = "tabs",
                           tabPanel("Gini", plotOutput("hospitilizationPlot")),
+                          tabPanel("Var Descriptions", div(dataTableOutput("hosp_descriptions"), style = "font-size:80%")),
                           tabPanel("Cutoff", plotOutput("cutoff")),
                           tabPanel("ROC", plotOutput("roc"))
               )
             ),
-            box(
-              title = "Gini Impurity", width = NULL, background = "light-blue",
-              "These are variable importance values reported from a ranger model that predicts hospital discharges"
+            fluidRow(
+              infoBoxOutput("aucBox"),
+              infoBoxOutput("accBox")
             )
           )
         )
@@ -93,7 +106,7 @@ server <- function(input, output) {
   
   output$hospitilizationPlot <- renderPlot({
     load("data/ranger_imp.rda")
-    hosp.imp.dt.top <- arrange(imp.dt,desc(imp))[1:input$hosp_vars, ]
+    hosp.imp.dt.top <- arrange(imp.dt,desc(imp))[1:10, ]
     descriptions = as.data.frame(hosp.imp.dt.top$rn)
     colnames(descriptions) <- c("Predictor")
     descriptions$Description <- meta_named_char[hosp.imp.dt.top$rn]
@@ -161,6 +174,29 @@ server <- function(input, output) {
             ylab('Relative Importance')+
             coord_flip())
   })
+  
+  output$aucBox <- renderInfoBox({
+    infoBox(
+      "AUC", "90%", icon = icon("check-circle
+                                "),
+      color = "light-blue", fill = TRUE
+    )
+  })
+  
+  output$accBox <- renderInfoBox({
+    infoBox(
+      "Accuracy", "74%", icon = icon("thumbs-up"),
+      color = "yellow", fill = TRUE
+      )
+  })
+  
+  # output$accBox <- renderInfoBox({
+  #   infoBox(
+  #     "AUC", "90%", icon = icon("thumbs-up"),
+  #     color = "light-blue", fill = TRUE
+  #   )
+  # })
+  
 }
 
 shinyApp(ui, server)
