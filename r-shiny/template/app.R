@@ -6,6 +6,10 @@ library(dplyr)
 
 variables = c(1:24)
 load("data/behavior_models.rda")
+load("data/planDesignVars.rda")
+load("data/behaviorVars.rda")
+load("data/controlVars.rda")
+load("data/preventiveVars.rda")
 
 ui <- dashboardPage(
   dashboardHeader(title = "Benefit Focus & CofC"),
@@ -18,6 +22,10 @@ ui <- dashboardPage(
       ),
       menuItem("Behaviors",
                tabName = "behaviors",
+               icon = icon("dashboard")
+      ),
+      menuItem("CDC Guidelines",
+               tabName = "buckets",
                icon = icon("dashboard")
       )
     )
@@ -34,15 +42,15 @@ ui <- dashboardPage(
                 title = "Target: IPDIS15X (Inpatient Hospitalizations)",
                 solidHeader = TRUE, 
                 status = "primary",
-                checkboxGroupInput("planDesignVars", label = h4("Plan Design Variables"), 
-                                   choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
-                                   selected = 1),
-                checkboxGroupInput("behaviorVars", label = h4("Behavior Variables"), 
-                                   choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
-                                   selected = 1),
-                checkboxGroupInput("controlVars", label = h4("Control Variables"), 
-                                   choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3),
-                                   selected = 1),
+                div(checkboxGroupInput("planDesignVars", label = h4("Plan Design Variables"), 
+                                   choices = plan.dsn,
+                                   selected = plan.dsn), style="height: 150px; overflow-y: scroll;"),
+                div(checkboxGroupInput("behaviorVars", label = h4("Behavior Variables"), 
+                                   choices = behaviors,
+                                   selected = behaviors), style="height: 150px; overflow-y: scroll;"),
+                div(checkboxGroupInput("controlVars", label = h4("Control Variables"), 
+                                   choices = controls,
+                                   selected = controls), style="height: 150px; overflow-y: scroll;"),
                 hr(),
                 actionButton("makeModel", "Generate Model")
   
@@ -93,6 +101,28 @@ ui <- dashboardPage(
               )
             )
         )
+      ),
+      tabItem(tabName = "buckets",
+              fluidRow(
+                column(width = 6,
+                       box(
+                         width=NULL,
+                         title = "Follow/Not-Follow Guidelines",
+                         solidHeader = TRUE, 
+                         status = "primary",
+                         div(checkboxGroupInput("preventiveVars", label = h4("Choose Preventive Care Variables"), 
+                                                choices = preventive_behaviors,
+                                                selected = preventive_behaviors), style="height: 375px; overflow-y: scroll;")
+                       )
+                ),
+                column(width = 6,
+                       box(
+                         width = NULL,
+                         plotOutput("cdcPlot")
+                  )
+                )
+              )
+              
       )
     )
   )
@@ -101,6 +131,9 @@ ui <- dashboardPage(
 server <- function(input, output) {
   load("data/meta.rda")
   load("data/confusion_matrices.rda")
+  load("data/mepsPrivate.2015.rda")
+  load("data/mepsBehaviorBuckets.rda")
+  # source('data/shiny_ranger.R', local = TRUE)
   
   meta_named_char <- c(meta_named_char, age.cat="concatenated age")
   
@@ -177,8 +210,7 @@ server <- function(input, output) {
   
   output$aucBox <- renderInfoBox({
     infoBox(
-      "AUC", "90%", icon = icon("check-circle
-                                "),
+      "AUC", "90%", icon = icon("check-circle"),
       color = "light-blue", fill = TRUE
     )
   })
@@ -190,12 +222,16 @@ server <- function(input, output) {
       )
   })
   
-  # output$accBox <- renderInfoBox({
-  #   infoBox(
-  #     "AUC", "90%", icon = icon("thumbs-up"),
-  #     color = "light-blue", fill = TRUE
-  #   )
-  # })
+  
+  output$cdcPlot <- renderPlot({
+    buckets %>%
+      filter(AGE15X > 40 & AGE15X <= 60) %>%
+      group_by(behave_bucket) %>%
+      summarize(Frequency = n()) %>%
+      ggplot(., aes(x = behave_bucket, y = Frequency)) +
+      geom_bar(stat = "identity", fill = "darkgreen") +
+      ggtitle("Those Who Follow CDC Guidelines, Age 40-60 (MEPS 2015)")
+  })
   
 }
 
