@@ -62,7 +62,7 @@ Private_Filter_Uni <- function(df, yr_ending){
 }
 
 Filter_MEPS_2015 <- function(df15, vars){
-  mepsPrivate.2015<-Private_Filter(df15, 15)
+  mepsPrivate.2015<-Private_Filter_Uni(df15, 15)
   mepsPrivate.2015 <- mepsPrivate.2015[mepsPrivate.2015$AGE15X > 40,]
   mepsPrivate.2015$age.cat <- Age.to.Cat(mepsPrivate.2015, 'AGE15X')
   mepsPrivate.2015$w <- mepsPrivate.2015$IPDIS15
