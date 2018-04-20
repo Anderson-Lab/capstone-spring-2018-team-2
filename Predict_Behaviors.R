@@ -6,8 +6,17 @@ library(ggplot2)
 source("Join_Data.R")
 #load('meta.rda')
 
-#  ------------- Initialize variables we are interested in for modeling -------------
+# Get data
+meps <- Join_MEPS()
+meps.p <- meps[meps$PHOLDER == 1,]
+mepsPublic<-Public_Filter(meps.p)
+mepsPrivate<-Private_Filter(meps.p)
 
+# Get vars
+mepsPrivate <- mepsPrivate[mepsPrivate$AGE15X > 40,]
+mepsPrivate$w <- mepsPrivate$IPDIS15
+mepsPrivate[mepsPrivate$w<1, 'w']<- .3
+mepsPrivate$age.cat <- Age.to.Cat(mepsPrivate, 'AGE15X')
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
 behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 
                'BRSTEX53', 'MAMOGR53', 'CLNTST53')
@@ -17,30 +26,17 @@ weights <- 'w'
 ordered <- c('PLANMETL', 'ADGENH42', 'age.cat')
 factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53', behaviors)
 
-vars <- c(plan.dsn, behaviors, controls, weights, 'IPDIS15')
+vars <- c(plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, controls)
 
 behavior_models = vector("list", length(behaviors))
 confusion_matrices = vector("list", length(behaviors))
 names(behavior_models) = behaviors
 
-#  ------------- Gather Data we need for modeling --------------------
 
-meps.2015 <- Join_MEPS(2015)
-meps.2014 <- Join_MEPS(2014)
-meps.2013 <- Join_MEPS(2013)
-
-# td <- Combine_MEPS_Years(meps.2015, 
-#                         meps.2014, 
-#                         meps.2013, 
-#                         join_vars = vars[!vars %in% 'PLANMETL'])
-
-td <- Filter_MEPS_2015(meps.2015, vars = vars)
-
-
+td <- mepsPrivate[,vars]
 #Coerce to fewer factors
 td$ANNDEDCT <- as.numeric(td$ANNDEDCT)
-
 for(variable in c(plan.dsn, behaviors)){
   td[td[,variable] < 0, variable] <- "Unknown"
 }

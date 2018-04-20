@@ -2,10 +2,20 @@ library(ranger)
 library(caret)
 library(dplyr)
 source("Join_Data.R")
+source('baseline.R')
 load('meta.rda')
 
-#  ------------- Initialize variables we are interested in for modeling -------------
+# Get data
+meps <- Join_MEPS()
+meps.p <- meps[meps$PHOLDER == 1,]
+#mepsPublic<-Public_Filter(meps.p)
+mepsPrivate<-Private_Filter(meps.p)
 
+# Get vars
+mepsPrivate <- mepsPrivate[mepsPrivate$AGE15X > 40,]
+mepsPrivate$w <- mepsPrivate$IPDIS15
+mepsPrivate[mepsPrivate$w<1, 'w']<- .3
+mepsPrivate$age.cat <- Age.to.Cat(mepsPrivate, 'AGE15X')
 plan.dsn <- c('HOSPINSX','ANNDEDCT', 'HSAACCT', 'PLANMETL')
 behaviors <- c('BPCHEK53', 'CHOLCK53', 'NOFAT53', 'CHECK53', 'ASPRIN53', 'PAPSMR53', 
                'BRSTEX53', 'MAMOGR53', 'CLNTST53')
@@ -15,22 +25,8 @@ target <- 'IPDIS15'
 weights <- 'w'
 vars <- c(target, plan.dsn, behaviors, controls, weights)
 predVars <- c(plan.dsn, behaviors, controls)
-ordered <- c('PLANMETL','ADGENH42', 'age.cat', behaviors)
+ordered <- c('PLANMETL', 'ADGENH42', 'age.cat', behaviors)
 factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53')
-
-# ------------- Gather data for modeling -------------
-
-meps.2015 <- Join_MEPS(2015)
-meps.2014 <- Join_MEPS(2014)
-meps.2013 <- Join_MEPS(2013)
-
-# mepsPrivate <- Combine_MEPS_Years(meps.2015, 
-#                          meps.2014, 
-#                          meps.2013, 
-#                          join_vars = vars[!vars %in% 'PLANMETL'])
-
-mepsPrivate <- Filter_MEPS_2015(meps.2015, vars = vars)
-
 
 #Set target to binary
 mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
@@ -52,7 +48,7 @@ for(factor in ordered){
 trainidx <- createDataPartition(mepsPrivate$IPDIS15, p=.8, list = FALSE)
 train <- mepsPrivate[trainidx,vars]
 y.test <- mepsPrivate[-trainidx,target]
-x.test <- mepsPrivate[-trainidx,-which(names(mepsPrivate) == target)]
+x.test <- mepsPrivate[-trainidx,-which(names(meps) == target)]
 
 #ds <- downSample(train, train[,target], list = FALSE)
 f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
@@ -66,14 +62,14 @@ fit <- ranger(formula = f,
               classification = TRUE,
               sample.fraction = .7)
 
-save(fit, file = "r-shiny/template/data/ranger_hosp_fit.rda")
+#save(fit, file = "r-shiny/template/data/ranger_hosp_fit.rda")
 
 
 # get model performance metrics
 preds.train <- as.data.frame(predict(fit, train[,predVars])$predictions)
 preds.test <- as.data.frame(predict(fit, x.test)$predictions)
-save(preds.test, file = "r-shiny/template/data/ranger_hosp_preds.rda")
-save(y.test, file = "r-shiny/template/data/ranger_hosp_true.rda")
+#save(preds.test, file = "r-shiny/template/data/ranger_hosp_preds.rda")
+#save(y.test, file = "r-shiny/template/data/ranger_hosp_true.rda")
 classNames <- c('NoHosp', 'Hosp')
 levels(train[,target])<-classNames
 levels(y.test)<-classNames
@@ -92,6 +88,10 @@ levels(train.Results$pred) <- classNames
 levels(test.Results$pred) <- classNames
 twoClassSummary(train.Results, lev = classNames)
 twoClassSummary(test.Results, lev = classNames) 
+
+base.preds <- baseline(train[,target], length(y.test))
+confusionMatrix(base.preds, y.test)
+confusionMatrix(test.Results$pred, y.test)
 
 
 # Performance Plots
