@@ -1,6 +1,7 @@
 library(caret)
 library(ranger)
 source("Join_Data.R")
+source("baseline.R")
 load('rda_data/mepsBehaviorBuckets.rda')
 
 unlist <- unlist(buckets) 
@@ -67,6 +68,8 @@ rf.model <- ranger(formula = f,
 lin.preds <- predict(lin.model, x.test, type = 'response')
 lin.preds.test <- tibble(NoHosp=1-lin.preds, Hosp=lin.preds)
 rf.preds.test <- as_tibble(predict(rf.model, x.test)$predictions) %>% rename("NoHosp" = '0', "Hosp" = '1')
+base.preds <- baseline(train[,target], length(y.test), FALSE)
+confusionMatrix(base.preds, y.test)
 get_metrics(lin.preds.test, y.test, 0.5)
 get_metrics(rf.preds.test, y.test, 0.5)
 
