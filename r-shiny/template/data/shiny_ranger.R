@@ -1,9 +1,7 @@
-library(ranger)
-library(caret)
-library(dplyr)
+
 #  ------------- Initialize variables we are interested in for modeling -------------
 
-buildHospModel <- function(mepsPrivate, train, planVars, behaviorVars, controlVars) {
+buildHospModel <- function(mepsPrivate, train, planVars, behaviorVars, controlVars, nonHospWt, hospWt) {
   
   target <- 'IPDIS15'
   weights <- 'w'
@@ -12,7 +10,12 @@ buildHospModel <- function(mepsPrivate, train, planVars, behaviorVars, controlVa
   ordered <- c('PLANMETL','ADGENH42', 'age.cat', behaviors)
   factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53')
   
+  # mepsPrivate = mepsPrivate %>% 
+  #   select(w, IPDIS15) %>%
+  #   mutate(w = ifelse(IPDIS15 = 0, nonHospWt, hospWt))
   #Set target to binary
+  mepsPrivate$w[mepsPrivate$IPDIS15 == 0] <- nonHospWt
+  mepsPrivate$w[mepsPrivate$IPDIS15 > 1 ] <- hospWt
   mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
   
   #Coerce to fewer factors
@@ -45,28 +48,3 @@ buildHospModel <- function(mepsPrivate, train, planVars, behaviorVars, controlVa
   return(fit)
   
 }
-
-  # get model performance metrics
-  
-
-
-  # Performance Plots
-
-  # library(ROCR)
-  # ## find the best cut off
-  # pred <- prediction( preds.train[,1],  train[,target])
-  # 
-  # plot(performance(pred, "sens" , x.measure = "cutoff"), col = 'red', ylab= NULL, main="Optimal Cutoff")
-  # par(mar=c(4,4,4,4))
-  # par(new=T)
-  # plot(performance(pred, "spec" , x.measure = "cutoff"),add = TRUE, col = 'blue', xlab = NULL)
-  # axis(side = 4,  at = .5, labels = 'specificity', padj = 1 )
-  # legend(.3, .9, legend=c("Sensitivity", "Specificity"),
-  #        col=c("red", "blue"), lty=1, cex=0.8)
-  # 
-  # plot(performance(pred, "tpr" , x.measure = "fpr"), col = 'red', ylab= NULL)
-  # abline(0,1)
-  # plot(performance(pred, "acc" , x.measure = "cutoff"), col = 'red', ylab= NULL)
-  # 
-  # performance(pred, "auc")
-

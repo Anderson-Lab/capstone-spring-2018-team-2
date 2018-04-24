@@ -22,7 +22,7 @@ The primary scripts for generating models are
       * Uses buckets / health plan design variables to predict hospitilization</br>
       * Uses health plan design variables to predict behavior buckets 
 
-## R-Shiny Web App
-(Add link to methods/code/demostration)
-
+## R-Shiny Web App: https://g-rock.shinyapps.io/benefitfocusxcofc/
+* ```r-shiny/template/app.R``` -> Run this file within r-studio to open the shiny app locally
+* ```r-shiny/template/data``` -> app.R dependency data
 ### https-github.com-Anderson-Lab-capstone-spring-2018-team-2

@@ -2,8 +2,10 @@ library(shiny)
 library(data.table)
 library(ggplot2)
 library(shinydashboard)
-library(dplyr)
 library(ROCR)
+library(ranger)
+library(caret)
+library(dplyr)
 
 source('data/shiny_ranger.R', local = TRUE)
 
@@ -25,10 +27,6 @@ ui <- dashboardPage(
       ),
       menuItem("Behaviors",
                tabName = "behaviors",
-               icon = icon("dashboard")
-      ),
-      menuItem("CDC Guidelines",
-               tabName = "buckets",
                icon = icon("dashboard")
       )
     )
@@ -56,17 +54,20 @@ ui <- dashboardPage(
                                    selected = controls), style="height: 150px; overflow-y: scroll;"),
                 hr(),
                 div(style="display: inline-block;vertical-align:top; width: 150px;", 
-                    numericInput('nonHospWeight', 
+                    numericInput('nonHospWt', 
                                  "NonHosp Wt.", 
                                  value = 0.3,
+                                 step = 0.1,
                                  width = '150px')
                 ),
                 div(style="display: inline-block;vertical-align:top; width: 150px;",
-                    numericInput('hospWeight',
+                    numericInput('hospWt',
                                  "Hosp Wt.", 
                                  value = 1,
+                                 step = 1,
                                  width = '150px')
                 ),
+                hr(),
                 actionButton("makeModel", "Generate Model")
   
               )
@@ -86,7 +87,6 @@ ui <- dashboardPage(
             ),
             fluidRow(
               infoBoxOutput("aucBox"),
-              infoBoxOutput("accBox"),
               infoBoxOutput("cutoffBox")
             )
           )
@@ -118,28 +118,6 @@ ui <- dashboardPage(
               )
             )
         )
-      ),
-      tabItem(tabName = "buckets",
-              fluidRow(
-                column(width = 6,
-                       box(
-                         width=NULL,
-                         title = "Follow/Not-Follow Guidelines",
-                         solidHeader = TRUE, 
-                         status = "primary",
-                         div(checkboxGroupInput("preventiveVars", label = h4("Choose Preventive Care Variables"), 
-                                                choices = preventive_behaviors,
-                                                selected = preventive_behaviors), style="height: 375px; overflow-y: scroll;")
-                       )
-                ),
-                column(width = 6,
-                       box(
-                         width = NULL,
-                         plotOutput("cdcPlot")
-                  )
-                )
-              )
-              
       )
     )
   )
@@ -156,8 +134,8 @@ server <- function(input, output) {
   
   meta_named_char <- c(meta_named_char, age.cat="Binned Ages")
 
-  modelVars <- eventReactive(input$makeModel, 
-                             {buildHospModel(mepsPrivate, train, input$planVars, input$behaviorVars, input$controlVars)},
+  modelVars <- eventReactive(input$makeModel,
+                             {buildHospModel(mepsPrivate, train, input$planVars, input$behaviorVars, input$controlVars, input$nonHospWt, input$hospWt)},
                              ignoreNULL = FALSE
   )
   
@@ -165,13 +143,13 @@ server <- function(input, output) {
     
     fit = modelVars()
     fit.top = fit$variable.importance[order(unlist(fit$variable.importance),decreasing=TRUE)]
-    importance = as.data.frame(stack(fit.top))[1:10,]
-    colnames(importance) <- c("Predictor", "Importance")
-    importance$Description <- meta_named_char[importance$Predictor]
+    importance = as.data.frame(stack(fit.top))
+    colnames(importance) <- c("Importance", "Predictor")
+    importance$Description <- meta_named_char[levels(importance$Predictor)]
     
-    output$hosp_descriptions <- renderDataTable(importance, list(searching = FALSE, paging = FALSE))
+    output$hosp_descriptions <- renderDataTable(importance[c(1:10),c(2:3)], list(searching = FALSE, paging = FALSE))
     
-    ggplot(importance, aes(x=reorder(Importance, Predictor), y=Predictor)) +
+    ggplot(importance[1:10,], aes(x=reorder(Predictor, Importance), y=Importance)) +
       geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
       xlab('Variables') +
       ylab('Relative Importance') +
@@ -233,15 +211,15 @@ server <- function(input, output) {
     behavior.imp <-behavior_models[input$behavior]
     behavior.imp.dt <- setDT(as.data.frame(behavior.imp), keep.rownames = TRUE)[]
     behavior.imp.dt.top <- behavior.imp.dt[order(-behavior.imp.dt[[input$behavior]])][1:input$beh_vars, ]
-    descriptions <- as.data.frame(behavior.imp.dt.top$rn)
-    colnames(descriptions) <- c("Predictor")
+    descriptions <- as.data.frame(behavior.imp.dt.top)
+    colnames(descriptions) <- c("Predictor", "Importance")
     descriptions$Description <- meta_named_char[behavior.imp.dt.top$rn]
 
-    output$beh_descriptions <- renderDataTable(descriptions, list(searching = FALSE, paging = FALSE))
+    output$beh_descriptions <- renderDataTable(descriptions[,c(1,3)], list(searching = FALSE, paging = FALSE))
     
     output$confusionPrint <- renderPrint(confusion_matrices[[input$behavior]])
     
-    print(ggplot(behavior.imp.dt.top, aes(x=reorder(rn,behavior.imp[[input$behavior]][1:input$beh_vars]), y=behavior.imp[[input$behavior]][1:input$beh_vars])) +
+    print(ggplot(descriptions[,c(1,2)], aes(x=reorder(Predictor, Importance), y=Importance)) +
             geom_bar(stat="identity", fill = "dodgerblue3", color="black") + 
             ggtitle(paste('Predicting:', meta_named_char[input$behavior], '(', input$behavior, ')')) +
             xlab('Variables') +
@@ -264,7 +242,7 @@ server <- function(input, output) {
                              pred = ifelse(preds.test[,classNames[1]] < cutOff, classNames[1], classNames[2]))
     # test Results
     levels(test.Results$pred) <- classNames
-    summary <- twoClassSummary(train.Results, lev = classNames)
+    summary <- twoClassSummary(test.Results, lev = classNames)
     
     infoBox(
       "AUC", paste(round(summary[['ROC']] * 100, digits=1), '%'), icon = icon("check-circle"),
@@ -272,30 +250,6 @@ server <- function(input, output) {
     )
   })
   
-  output$accBox <- renderInfoBox({
-    fit = modelVars()
-    preds.test <- as.data.frame(predict(fit, x.test)$predictions)
-    
-    classNames <- c('NoHosp', 'Hosp')
-    levels(y.test)<-classNames
-    
-    colnames(preds.test)<-classNames
-    cutOff = .7
-    
-    test.Results<-data.frame(preds.test,
-                             obs = y.test,
-                             pred = ifelse(preds.test[,classNames[1]] < cutOff, classNames[1], classNames[2]))
-    # test Results
-    levels(test.Results$pred) <- classNames
-    confMatrix <- confusionMatrix(test.Results$pred, y.test)
-    
-    output$confusion_matrix <- renderPrint(confMatrix$table)
-    
-    infoBox(
-      "Accuracy", paste(round(confMatrix$overall[['Accuracy']] * 100, digits=1), '%'), icon = icon("thumbs-up"),
-      color = "light-blue", fill = TRUE
-      )
-  })
   
   output$cutoffBox <- renderInfoBox({
     fit = modelVars()
@@ -312,7 +266,7 @@ server <- function(input, output) {
                              pred = ifelse(preds.test[,classNames[1]] < cutOff, classNames[1], classNames[2]))
     # test Results
     levels(test.Results$pred) <- classNames
-    summary <- twoClassSummary(train.Results, lev = classNames)
+    summary <- twoClassSummary(test.Results, lev = classNames)
     
     infoBox(
       "Sens/Spec", paste(round(summary[['Sens']] * 100, digits=1), '% / ', paste(round(summary[['Spec']] * 100), '%')), icon = icon("list"),
