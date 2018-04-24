@@ -69,7 +69,7 @@ fit <- ranger(formula = f,
 preds.train <- as.data.frame(predict(fit, train[,predVars])$predictions)
 preds.test <- as.data.frame(predict(fit, x.test)$predictions)
 #save(preds.test, file = "r-shiny/template/data/ranger_hosp_preds.rda")
-#save(y.test, file = "r-shiny/template/data/ranger_hosp_true.rda")
+save(y.test, file = "r-shiny/template/data/y.test.rda")
 classNames <- c('NoHosp', 'Hosp')
 levels(train[,target])<-classNames
 levels(y.test)<-classNames
