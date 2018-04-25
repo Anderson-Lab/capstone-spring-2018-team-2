@@ -129,13 +129,12 @@ server <- function(input, output) {
   load("data/x.test.rda")
   load("data/y.test.rda")
   load('data/train.rda')
-  load("data/mepsPrivate.2015.rda")
   load("data/mepsBehaviorBuckets.rda")
   
   meta_named_char <- c(meta_named_char, age.cat="Binned Ages")
 
   modelVars <- eventReactive(input$makeModel,
-                             {buildHospModel(mepsPrivate, train, input$planVars, input$behaviorVars, input$controlVars, input$nonHospWt, input$hospWt)},
+                             {buildHospModel(train, input$planVars, input$behaviorVars, input$controlVars, input$nonHospWt, input$hospWt)},
                              ignoreNULL = FALSE
   )
   

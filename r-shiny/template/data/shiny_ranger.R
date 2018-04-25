@@ -1,7 +1,7 @@
 
 #  ------------- Initialize variables we are interested in for modeling -------------
 
-buildHospModel <- function(mepsPrivate, train, planVars, behaviorVars, controlVars, nonHospWt, hospWt) {
+buildHospModel <- function(train, planVars, behaviorVars, controlVars, nonHospWt, hospWt) {
   
   target <- 'IPDIS15'
   weights <- 'w'
@@ -9,29 +9,25 @@ buildHospModel <- function(mepsPrivate, train, planVars, behaviorVars, controlVa
   predVars <- c(planVars, behaviorVars, controlVars)
   ordered <- c('PLANMETL','ADGENH42', 'age.cat', behaviors)
   factors <- c('IPDIS15', 'HOSPINSX', 'HSAACCT','COBRA', 'PREGNT53')
-  
-  # mepsPrivate = mepsPrivate %>% 
-  #   select(w, IPDIS15) %>%
-  #   mutate(w = ifelse(IPDIS15 = 0, nonHospWt, hospWt))
-  #Set target to binary
-  mepsPrivate$w[mepsPrivate$IPDIS15 == 0] <- nonHospWt
-  mepsPrivate$w[mepsPrivate$IPDIS15 > 1 ] <- hospWt
-  mepsPrivate$IPDIS15[mepsPrivate$IPDIS15>1] <- 1
+
   
   #Coerce to fewer factors
-  mepsPrivate$ANNDEDCT <- as.numeric(mepsPrivate$ANNDEDCT)
+  train$ANNDEDCT <- as.numeric(train$ANNDEDCT)
   
   for(variable in c(planVars, behaviorVars)){
-    mepsPrivate[,variable] <- as.numeric(mepsPrivate[,variable])
-    mepsPrivate[mepsPrivate[,variable] < 0, variable] <- 0
+    train[,variable] <- as.numeric(train[,variable])
+    train[train[,variable] < 0, variable] <- 0
   }
   
   for(factor in factors){
-    mepsPrivate[,factor] <- as.factor(mepsPrivate[, factor])
+    train[,factor] <- as.factor(train[, factor])
   }
   for(factor in ordered){
-    mepsPrivate[,factor] <- as.ordered(mepsPrivate[, factor])
+    train[,factor] <- as.ordered(train[, factor])
   }
+  
+  train$w[train$w_copy < 1] <- nonHospWt
+  train$w[train$w_copy > 1] <- hospWt
   
   #ds <- downSample(train, train[,target], list = FALSE)
   f <- formula(paste(target, paste(predVars, collapse = '+' ), sep = '~'))
