@@ -89,7 +89,15 @@ levels(test.Results$pred) <- classNames
 twoClassSummary(train.Results, lev = classNames)
 twoClassSummary(test.Results, lev = classNames) 
 
-base.preds <- baseline(train[,target], length(y.test))
+base.preds <- as.data.frame(baseline(train[,target], length(y.test), TRUE))
+colnames(base.preds) <- 'NoHosp'
+base.preds$Hosp <- 1-base.preds$NoHosp
+base.Results<-data.frame(base.preds, 
+                          obs = y.test,
+                          pred = ifelse(base.preds[,classNames[1]] < cutOff, classNames[1], classNames[2]))
+levels(base.Results$pred) <- c('Hosp', 'NoHosp')
+levels(base.Results$pred) <- levels(base.Results$pred)[c('NoHosp', 'Hosp')]
+twoClassSummary(base.Results, lev = classNames) 
 confusionMatrix(base.preds, y.test)
 confusionMatrix(test.Results$pred, y.test)
 
