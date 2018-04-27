@@ -81,16 +81,16 @@ and frameworks of their own choice."
 <h3>
 <a id="results" class="anchor" href="#results" aria-hidden="true"><span class="octicon octicon-link"></span></a>Results</h3>
 <p>
-With the guideance of Benefitfocus, our team set out to find a link between healthplan design, patient behavior, and healthcare utilization. Due to the single semester time constraint we decided to narrow the scope of the project to only focus on utilization instead of personal well-being. We chose the most clostly healthcare expenditure, Inpatient Hospitalizaion, as our primary target variable and were successful with building a classification model that predicted this utilization from patient behavior with accuracy above 88%.
+With the guidance of Benefitfocus, our team set out to find a link between health plan design, patient behavior, and healthcare utilization. Due to the single semester time constraint we decided to narrow the scope of the project to only focus on utilization instead of personal well-being. We chose the most costly healthcare expenditure, Inpatient Hospitalization, as our primary target variable and were successful with building a classification model that predicted this utilization from patient behavior with accuracy above 88%.
 </p> 
 <h3>
 <a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h3>
 
 <p>
-Healthcare spending is one the highest consumer costs in the United States. At $3.3 trillioni, it accounted for almost a fifth of the country's GDP in 2016. This share has nearly doubled from 30 years ago. Relative to a 23% consumer price index increase from 2005, 2014 healthcare costs rose 15 percentage points. Of the all major goods and services, only child-care and higher education have experienced price increases faster than healthcare. Externalities from this increased spending can contribute to slow wage growth, temporary or part-time employment, outsourcing, a reduced to care, and personal bankruptcies.
+Healthcare spending is one the highest consumer costs in the United States. At $3.3 trillion, it accounted for almost a fifth of the country's GDP in 2016. This share has nearly doubled from 30 years ago. Relative to a 23% consumer price index increase from 2005, 2014 healthcare costs rose 15 percentage points. Of the all major goods and services, only child-care and higher education have experienced price increases faster than healthcare. Externalities from this increased spending can contribute to slow wage growth, temporary or part-time employment, outsourcing, a reduced to care, and personal bankruptcies.
 </p>
 <p>
-Navigating modern healthcare policy has become increasingly daunting for both employers and employees. With employers strained by rising costs, employees are now expected to take greater responsibilty with choosing, managing, and paying for their coverage.
+Navigating modern healthcare policy has become increasingly daunting for both employers and employees. With employers strained by rising costs, employees are now expected to take greater responsibility with choosing, managing, and paying for their coverage.
 </p>
 <img src="https://lh3.googleusercontent.com/HCGjbYoDDz4UZI5H0JA90pymh4VSqSfM3_Wvxxu8h79Tor5nGtdNBsTF2f4_KBd-8uUaztqyu0zNikECbgH7BG1qU0L8YmIiHxsYktrdHLmr4eRxsb9MkhMw7oH_iVubllZo8XwbahJvF3U8mexuwCRZGroP-A-vLjwW3qCCZsVmMHphVPbn8Z6L2VldNZ1nUv5WYcztuwlR9sLqOHkFW7guIC9wFHGhgcGGDBJvNXtfSugKf12OrjF167PCO4bD5eWT6h8xdks_G4SYySPS5ZjM1I6q3e1Ovxbm4mop0PoB1WWbhUKwifA_pSVsT3t0Ua0arGDKfWzqF0Qr0YrUtm9Cjz7KlbuKa3cG-N-l-iHtoJ0lZwy1UEAkMgttbIyynmrAXCYalT0n16gW_4tA_45GpnKrm2hKk-cSFFAkgW_p-c-pXtVBnJnX1LOB-fZOkq_WbXlzuoj-SfkqNABo0rAzaT7dqmiaSgS4renrTrT6HDkY8lNdIvXGGRQXB1MrVWjvZcwhsIC9rxoXYCVMsinskkAHmKRzsIhFbh7yYK9g9Dwd3ONcaeLOJMzkZtH0Q9eQ7eSpQWpafpYJcL1f-Pwnzdhvfj42jglAZy14=w892-h502-no" alt="Problem/Solution" align="right" height=350>
 <p>
@@ -103,13 +103,13 @@ Hospitalizations have historically been the largest expense in healthcare, accou
 </h3>
 <img src="https://meps.ahrq.gov/mepstrends/src/custom/img/oc_meps_logo_blue.png" alt="MEPS Logo" align="center" height=50>
 <p>
-For our predictive model we used data from the publicly available and federally administered Medical Expenditure Panel Survey. The specific dataset used came from the 2015 consolidated survey of families and indivuals, their medical providers, and employers across the US. The dataset includes specific health services used, how frequently they were used, the cost of these services, and how they were paid for. From this dataset we were able to parse out our predictor, control, and target variables relating to plan design, patient's behavior, and hospitalizations. The MEPS survey has influenced every major US healhcare policy decision since its inception in 1996.</p> 
+For our predictive model we used data from the publicly available and federally administered Medical Expenditure Panel Survey. The specific dataset used came from the 2015 consolidated survey of families and individuals, their medical providers, and employers across the US. The dataset includes specific health services used, how frequently they were used, the cost of these services, and how they were paid for. From this dataset we were able to parse out our predictor, control, and target variables relating to plan design, patient's behavior, and hospitalizations. The MEPS survey has influenced every major US healthcare policy decision since its inception in 1996.</p> 
 
 
 <h3>
 <a id="technologies-used" class="anchor" href="#technologies-used" aria-hidden="true"><span class="octicon octicon-link"></span></a>Technologies Used</h3>
 
-<p>R was out primary programming language used for project's statistical computation and modeling. RStudio was our R IDE, using dplyr to steamline data manipulation and ggplot2 for data visualizations. RShiny was used to develop our interactive web application to display results. GitHub was used for team collaboration, development, and version control. ZenHub is the agile project management tool integrated with GitHub.</p>
+<p>R was out primary programming language used for project's statistical computation and modeling. RStudio was our R IDE, using dplyr to streamline data manipulation and ggplot2 for data visualizations. RShiny was used to develop our interactive web application to display results. GitHub was used for team collaboration, development, and version control. ZenHub is the agile project management tool integrated with GitHub.</p>
 <img src="https://lh3.googleusercontent.com/dX9vQYsRv5BHHL1h4gYiUC_jwhenuP52qSI0FbVUs-l7w1ckiDQsC32LcYnjCTKZ5YRNYSB6JxLRlk3kvlnxpMFtBm8DkMlHFhBefZixq9BkGNBdUEj84Ob5IW6cf4ZE-kDa40voamNUsojnzkv7nqyIevgv4e9d8K0ZyauygRWbtxHiZyIitA-G0dPnXj9R37K1AqBRy3I-7V5zXNq2jc8TOrGHFLqaw_qqBiA-tR-B84-fF86SpsOWk3yLamxeLuVP9MH5buRy1ZKn4zQ0mdh8vHkYByzcSTNjO7RqdwF6TccuC1RdBz3r8Rz2VN5X-BWp3Q77uxE-Pp4NvDX2_L0FrKvCwigZM3X13XhqmhZl4NSW9JurXUQJBaxcGV14ejGMZ7km75X86f1I5EJFq92iVM0-GDQ-FlqKMeX7dA396oeaIHGhHdgJPCvvYgdcpjrg3f2xFxfvJYLOKqqENLqDaRn6dBY6AaVwxbKw3efvIHUnuQRje-3m8xeNAP5rjUtzaRQ47re7C7BPGeFQI7i8jB_His-4ZFgf4FH-tSEbRjKeEs8Rw1TjFoFxv0HMxD2lXsCW3htrsXWwP9mWf54JB-DadIEQqVEW2M4l=w614-h346-no" alt="Technologies Used" align="center" height=350>
 
 <h3>
@@ -127,12 +127,12 @@ For our predictive model we used data from the publicly available and federally 
 
 <h3>
 <a id="hospitalization-model" class="anchor" href="#hospitalization-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hospitalization Model</h3>
-<p>(Alex's Texts)</p>
+<p>(Alex's text)</p>
 
 <h3>
 <a id="behavior-models" class="anchor" href="#behavior-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Behavior Models</h3>
 <p>(Sonia's text)</p>
-<p>We further wanted to see if certain preventive care measures could be grouped together to simplify our prediction. We summarized the behaviors of respondents by those who follow or do not follow CDC guidelines and divided age into three categories: less than 40, 40-60, and greater than 60. We, however, did not see a greater improvement using this generalization, since it appears someone who is already getting regular checkups is also following through with recommended preventive care. 
+<p>Our team further wanted to see if certain preventive care measures could be grouped together in order to simplify our prediction. We summarized the behaviors of respondents by those who follow or do not follow CDC guidelines and divided age into three categories: less than 40, 40-60, and greater than 60. We, however, did not see a greater improvement using this generalization, since it appears someone who is already getting regular checkups is also following through with recommended preventive care. 
  </p>
 
 <h3>
