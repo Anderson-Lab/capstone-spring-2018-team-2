@@ -123,16 +123,33 @@ For our predictive model we used data from the publicly available and federally 
 <h3>
 <a id="variable-correlations" class="anchor" href="#variable-correlations" aria-hidden="true"><span class="octicon octicon-link"></span></a> Variable Correlations</h3>
 
-<p>(Sonia's text)</p>
+<p>(Sonia's text)
+<img src="https://lh3.googleusercontent.com/14ABmmkpTF75B-3Wwl7Qh9qXTzwh1IOPvY4jYQDqZvwWC1uWnZhn7XgnxG0BVWDrBVUUH3Yl7VmoFvcA6eLo3PL27PqhlgrMRUpxyAwfdrc4_1R4NK0lcwcvnPlSRA7uAGhqaDNWCoDx_VqG_VPXzjRVihblxeSK84ZRR6WXIDpjigkWKirXHgfXnv-DG0mkPLoFV0wQDwB4ywHO9dDJ2z_ZwIAOb6dStOeZx734xvHyydHml5_hryZfi4Ja-DfETWSHMbXzTGR0ckuqgHAanFTDqQJKA-ozr61nIpvAORPrE4rjUim4l43aGchz3Hoy1tEynOaGwxcbbR8bVmGYJJkNQgNravJ9qgsUPyK5Z63VBqfUlLx5c2yOoIvKek-tyYwKJMMNmRVwlZ9R7Xx7ejczHV2WUZW0qxui7BlDob5OqVOJLrr8gTyFceb0Xes-9AHPMcxVPmbDbXHFx6gsGfAmDpb8k03k7GHwdoSa08_e0YlP2XW25PtfsGcwqY4Mm9_p4IYMK1BgsImEfNReKB0zoJPKk5hED4FydtqHW1wYRPjHgFwg02hYGnGOvx1MYmLZYAYNUi9c_kVed9EJuvXaov_i-Pruw2R1SvdQ=w1204-h677-no" alt="Variable Correlation All +40" align="right" height=350>
+</p>
+<p>
+(Sonia's text)  
+<img src="https://lh3.googleusercontent.com/IIbNQCWlm9UOmXZIxuKjMlQAYiQIYFPcHqYfI5LFsFS-zpn8KcuCHobq662HXjWzMgczb5roeJ10XRgVPZwz7pmW9LCpul7yxfFow1M7ZGfBhry2VD7JdajnuXx8kczlGF4PptiNGocoSWKl17JZoiFNbekkq60vWLoG4enXC3RPc9s-zX0v7TzeBtyM54KonKt4dy-6yw8PjSn2Oh_db5WVLN1NRwLt8H132PPCCJfC1bocSErcmRQ-YFH3QVwTURlfXnP1SLxQrqRxMtyNWP_pqGxh_KnTdvcXpXnDq10yRzFcbNjXYVmf5Prm8V50Aa7S_XNx38o2WnY0KUTte8J-DuCmRN4-LB1xonC0XDjI2PgM_KRjjJXLXmVvXOp08ttuRzyp3yM1X3Zzpe-UI3jPRgCsvjlucbLxU6WC3wSF8xjMFApAfp5WQa95ySggGWednzQnvOUKVNInRxqLpP9ddp5DSiOFvrHTnqMfjtyt279KEPeao72-oW7E85IyQhHyB3HoSIwuztwCA4SQJp98Flp4nUS_EOBo5lk5I3foY-3sNTzthla7UhZHMBHKvRFW3p4onVjB22gBesbVUUqxV9jSQAgCNp0FDmEU=w1204-h677-no" alt="Variable Correlation by Gender +40" align= "left" height=350>
+</p>
 
 <h3>
 <a id="hospitalization-model" class="anchor" href="#hospitalization-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hospitalization Model</h3>
-<p>(Alex's text)</p>
+<p>
+(Alex's text)
+<img src="https://lh3.googleusercontent.com/deGW4Vf85gNqoevFrEKxJshZ1vEJu5NM9SzJCVWjaLRpOxJIlyLO9nbP48b0eu4r_uYFjOV6_i9xmn0mbUkTHT8NYE5rELM3wIbu7KHt6LI5BTVOat6ao259Qn16ZFreFxScWvN38cuqdSm8j4UW6nAdbvSij_XmfPEllvUrvXnh7uuWphdXLW9i3I-24-kgP2nRFT0drURRtPp_sBLN079CpjoKN_qrxGS-3bByT9fd-S7sxLpsPLNfUFm7b46tO5spaJX34Q6C6l2CCKihhRiw81ogBjsCRcOrDT9pUg5R2mF91FWA8xPY3ctCscW02XAFpAyaLHUOy52n-89rvbJXY7cn9G2K6vX0TzlgnaPCObEeezjZxMrkS812s_cCSl51iqjti_8f-xkyp779Xr6Pq2bV9DtQl3RcwSQdVmuNQmYePvSPpcgwl7FAplD6CYKq_Ut6l6dtWMHz0B_wWiH8JI1SwYPKtItxuJZrJk-q_AScN8bRAAhWm8QyNrcYh5GFXmLs4vXAlC5GLJ7PgwBrEZf9-0nUo8JE10mMcFd7eX_8Ei61J1_mrZPfUs2EkzIxtWQ9Z01XRdwJXRHcog3yQkHkpt0aOZugSxfd=w1204-h677-no" alt="Hospitalization Model One" align="right" height=350>
+</p>
+<p>
+  (Alex's text)
+  <img src="https://lh3.googleusercontent.com/P8r2hkpMW5Kb6le9cYqxwXGIGxHO4SPbixCb67gGUennbeTrjCPkmvH3J-4g9Dg65SXzHC5gqz7mq8l1AEQopIMdIkOuipqRHWjiZ_fZLDxkQk-5oyWwGiUHtoZ-pNhCK-A-6Sp2X8t0KyAJ68I7gHJ4a66hIqE0BXlokcFvQiWBVfeyBfzXdwdaMdW_6Kc-IhWaU-nt-fj6RoedT2uMYnnsBtu3QOZ1p06-H77F_0rd2LsP7Qs3WmqHqayrh2GZpVnEQbQYimICLDWpN4q4tPIYmiV1R2hG4D_2g83ZAkzCRkPq54VAMF632U2Eav5YZiIqLtib1Q4W1Iee8fAnlc9KBsfBFJRR7z8Gf6W7ZLwZhgpaAmvN_36eyEaAo-KBVtlC_6e1BNgBmBzpoyw_akjUwjb5Al5LzFjgCQjCWQohEkbgIu23PsXhoszlW63Fu0yv6d8n1VRivI4I9JGrjvxBMG9EamgXHKMTmuzlMVDAsYlnssaKwsFb-eU1Eg7PliHMRwvftw6SQtpDPG7IcFq5Pljc7FjJrjCxW5uIg6rREbLkW9zvWWE-s8TeSb8z1JyLvVGk4EeaChL40oWyZBliIdvLLhkGOWQRPHhO=w1204-h677-no"> alt="Hospitalization Model Two" align="left" height=350>
+</p>
 
 <h3>
 <a id="behavior-models" class="anchor" href="#behavior-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Behavior Models</h3>
-<p>(Sonia's text)</p>
-<p>Our team further wanted to see if certain preventive care measures could be grouped together in order to simplify our prediction. We summarized the behaviors of respondents by those who follow or do not follow CDC guidelines and divided age into three categories: less than 40, 40-60, and greater than 60. We, however, did not see a greater improvement using this generalization, since it appears someone who is already getting regular checkups is also following through with recommended preventive care. 
+<p>(Sonia's text)
+  <img src="https://lh3.googleusercontent.com/irnrvx6RzWuhqknQGN-7AvHH4vRXUzr_0pRbrD_cUZ_x41FYWcQi4I4LzXJpZJc2Szw8d9-cXy--DduZNKFuDUbtgRb5wBhyqBavhhLONorh77pNznoZov1BD1uVEmbmYH18HaJzfP6or_7wyr3-gQeHKP7spaYT6tNKowGuXifUsTXU7SoWONlFsVBA6zutWVCKNy737dgUZdXvO5iHVdykypgHsXdiqhfPcAj2yi_gnZgV0B5DrNHPS-_qe9ZpDdk2dvIlGDxJUgGvNtibB-QPqvPT9sNhuLtdA25fjW7Aj95fAB4-0RAoKgZexoUzb-SrggwKgQGvnoCp7hSl5eJbYQs36gUR_pEq27dQDZH1DYpQU6gYDiYWhn1pDGRq9bv9nFO3jX_tcOkrgqwTTyujJqEs1PgCxHxH350H7kQZMWt7Bo4lKofZQNLzVNxGSxz0w4hBlA0icNMDfmWRf-0nKN8etmoW-hBBZ89DPUZuIELIlL69xoBUlffujgkphlo6Ydiekht8WK3pBqTXYMvg5OCSSlec4444ut5xDuveqeqfPXqDHKOHqa4d1QyTFaAorJmdCR4Eas_sQb9GJZLq5y0SDsTC0o0EGJ2E=w1204-h677-no"> alt="Behavior Model One" align="right" height=350>
+</p>
+<p>
+  Our team further wanted to see if certain preventive care measures could be grouped together in order to simplify our prediction. We summarized the behaviors of respondents by those who follow or do not follow CDC guidelines and divided age into three categories: less than 40, 40-60, and greater than 60. We, however, did not see a greater improvement using this generalization, since it appears someone who is already getting regular checkups is also following through with recommended preventive care.
+<img src="https://lh3.googleusercontent.com/Gilz6sJsruJcCRonp4jguJBjaci9BzeaEJsrsjvov0lN1e3NZOloPbnNKLqWTRcUcpf5YMp45psOTiMpGrppgKybGZ0K3T9sv8ao_F9ZKGL8ARFGNhSukidki2VOWgX89gu2TfFJ5B2zirlag1N6tpGPRoy03PDi9tE2zzFdo1uqO2mhUt86e2B4tu3Cn56d99KkM0S8k29_hhuYQy2q62e4ZmnF0Hs9JFm07Gd9pVLaSJrZ-AXJL6U5Ws9iPUP3apgYu4lH0WQf20nll1we6PIrpP9MngYmnTOmPBUMwC9ERDvit6TS7ZLzRqxg7bTgdM4cu-fH-VdXZ_5foO-3eAjGh5VdovFG20FpQmxnB5dLYG0BldFY9bOyn2cJAaLnOGaE-6ST04r80QmB-XtSXnWqNPOx-atLsxMi0u-vqDkbcfCSiLUO5P545Uaprr1eGiV3Zg6NETUWIVUPA3b-EoffsH-Jz6LdRryQgTVncjLK5ZCp-SnbsNfMCU-DRiHI73zHgR6phiuyrjDoMgHiMMOiKpkE5u_wxk6UJS7VNhVDQSBTCfu-qFGZw5x-SOb2zlyWjcq7O9DgyuR9Tm-vA_c8iF-tAwKKfUzTMB0Z=w1204-h677-no"> alt="Behavior Model Two" align="left" height=350>
  </p>
 
 <h3>
