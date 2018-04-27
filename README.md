@@ -39,11 +39,8 @@
 <h3>Contents</h3>
 <ul>
 <li><a class="active" href="#source-material"><u>Source Material</u></a></li>
-
 <li><a class="active" href="#project-details">Project Details</a></li>
-
 <li><a class="active" href="#results">Results</a></li>
-
 <li><a class="active" href="#introduction">Introduction</a></li>
 <li><a class="active" href="#data-used">Data Used</a></li>
 <li><a class="active" href="#technologies-used">Technologies Used</a></li>
@@ -60,7 +57,7 @@
 
 <h3><a id="source-material" class="anchor" href="#source-material" aria-hidden="true"><span class="octicon octicon-link"></span></a>Source Material</h3>
 <dl>
-<dt><a href="https://drive.google.com/drive/folders/1Nt3z3YmBd0J0gH0AGkhc1xPe7p3CC6ZS">Benefitfocus Flyer</a></dt>
+<!-- <dt><a href="https://drive.google.com/drive/folders/1Nt3z3YmBd0J0gH0AGkhc1xPe7p3CC6ZS">Benefitfocus Flyer</a></dt> -->
 <dt><a href="https://meps.ahrq.gov/mepsweb/index.jsp">Medical Expenditure Panel Survey</a>
     <dd>
     <a href="https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_results.jsp?cboDataYear=All&cboDataTypeY=1%2CHousehold+Full+Year+File&buttonYearandDataType=Search&cboPufNumber=All&SearchTitle=Consolidated+Data">2015 Full Year Consolidated Data File</a></dd>
