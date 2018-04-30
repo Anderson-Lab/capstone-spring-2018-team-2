@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
 
 </head>
@@ -123,11 +123,12 @@ For our predictive model we used data from the publicly available and federally 
 <h3>
 <a id="variable-correlations" class="anchor" href="#variable-correlations" aria-hidden="true"><span class="octicon octicon-link"></span></a> Variable Correlations</h3>
 
-<p>(Sonia's text)
+<p>
+To gain a top-level understanding of the data set, we generated variable correlation plots using all of the numeric and ordered variables. It is evident from these plots that behaviors are generally correlated with one another. Given that this is the case, it is possible that this will affect out variable importance later on in modelling as some of the predictors may be giving the same information. 
 <img src="https://lh3.googleusercontent.com/14ABmmkpTF75B-3Wwl7Qh9qXTzwh1IOPvY4jYQDqZvwWC1uWnZhn7XgnxG0BVWDrBVUUH3Yl7VmoFvcA6eLo3PL27PqhlgrMRUpxyAwfdrc4_1R4NK0lcwcvnPlSRA7uAGhqaDNWCoDx_VqG_VPXzjRVihblxeSK84ZRR6WXIDpjigkWKirXHgfXnv-DG0mkPLoFV0wQDwB4ywHO9dDJ2z_ZwIAOb6dStOeZx734xvHyydHml5_hryZfi4Ja-DfETWSHMbXzTGR0ckuqgHAanFTDqQJKA-ozr61nIpvAORPrE4rjUim4l43aGchz3Hoy1tEynOaGwxcbbR8bVmGYJJkNQgNravJ9qgsUPyK5Z63VBqfUlLx5c2yOoIvKek-tyYwKJMMNmRVwlZ9R7Xx7ejczHV2WUZW0qxui7BlDob5OqVOJLrr8gTyFceb0Xes-9AHPMcxVPmbDbXHFx6gsGfAmDpb8k03k7GHwdoSa08_e0YlP2XW25PtfsGcwqY4Mm9_p4IYMK1BgsImEfNReKB0zoJPKk5hED4FydtqHW1wYRPjHgFwg02hYGnGOvx1MYmLZYAYNUi9c_kVed9EJuvXaov_i-Pruw2R1SvdQ=w1204-h677-no" alt="Variable Correlation All +40" align="right" height=350>
 </p>
 <p>
-(Sonia's text)  
+We noticed weaker correlations among papsmear, breast exam, and mamogram. Because men do not receive those exams, we subset the data set by gender to confirm our results that behaviors are strongly correlated. In the only women subset plot, the correlations are stronger for those variables.
 <img src="https://lh3.googleusercontent.com/IIbNQCWlm9UOmXZIxuKjMlQAYiQIYFPcHqYfI5LFsFS-zpn8KcuCHobq662HXjWzMgczb5roeJ10XRgVPZwz7pmW9LCpul7yxfFow1M7ZGfBhry2VD7JdajnuXx8kczlGF4PptiNGocoSWKl17JZoiFNbekkq60vWLoG4enXC3RPc9s-zX0v7TzeBtyM54KonKt4dy-6yw8PjSn2Oh_db5WVLN1NRwLt8H132PPCCJfC1bocSErcmRQ-YFH3QVwTURlfXnP1SLxQrqRxMtyNWP_pqGxh_KnTdvcXpXnDq10yRzFcbNjXYVmf5Prm8V50Aa7S_XNx38o2WnY0KUTte8J-DuCmRN4-LB1xonC0XDjI2PgM_KRjjJXLXmVvXOp08ttuRzyp3yM1X3Zzpe-UI3jPRgCsvjlucbLxU6WC3wSF8xjMFApAfp5WQa95ySggGWednzQnvOUKVNInRxqLpP9ddp5DSiOFvrHTnqMfjtyt279KEPeao72-oW7E85IyQhHyB3HoSIwuztwCA4SQJp98Flp4nUS_EOBo5lk5I3foY-3sNTzthla7UhZHMBHKvRFW3p4onVjB22gBesbVUUqxV9jSQAgCNp0FDmEU=w1204-h677-no" alt="Variable Correlation by Gender +40" align= "left" height=350>
 </p>
 
@@ -144,7 +145,7 @@ For our predictive model we used data from the publicly available and federally 
 
 <h3>
 <a id="behavior-models" class="anchor" href="#behavior-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Behavior Models</h3>
-<p>(Sonia's text)
+<p> We then extended this approach to predict behaviors instead of hospitalization. Due to time constraints, we were not able to tune these models to the performance we wanted. However, the models to offer a little predictive power. In the future, it may be best to coerce the behaviors down to fewer levels. However, some of the models did pick out plan design variables as important when predicting behavior.  
   <img src="https://lh3.googleusercontent.com/irnrvx6RzWuhqknQGN-7AvHH4vRXUzr_0pRbrD_cUZ_x41FYWcQi4I4LzXJpZJc2Szw8d9-cXy--DduZNKFuDUbtgRb5wBhyqBavhhLONorh77pNznoZov1BD1uVEmbmYH18HaJzfP6or_7wyr3-gQeHKP7spaYT6tNKowGuXifUsTXU7SoWONlFsVBA6zutWVCKNy737dgUZdXvO5iHVdykypgHsXdiqhfPcAj2yi_gnZgV0B5DrNHPS-_qe9ZpDdk2dvIlGDxJUgGvNtibB-QPqvPT9sNhuLtdA25fjW7Aj95fAB4-0RAoKgZexoUzb-SrggwKgQGvnoCp7hSl5eJbYQs36gUR_pEq27dQDZH1DYpQU6gYDiYWhn1pDGRq9bv9nFO3jX_tcOkrgqwTTyujJqEs1PgCxHxH350H7kQZMWt7Bo4lKofZQNLzVNxGSxz0w4hBlA0icNMDfmWRf-0nKN8etmoW-hBBZ89DPUZuIELIlL69xoBUlffujgkphlo6Ydiekht8WK3pBqTXYMvg5OCSSlec4444ut5xDuveqeqfPXqDHKOHqa4d1QyTFaAorJmdCR4Eas_sQb9GJZLq5y0SDsTC0o0EGJ2E=w1204-h677-no" alt="Behavior Model One" align="right" height=350>
 </p>
 <p>
