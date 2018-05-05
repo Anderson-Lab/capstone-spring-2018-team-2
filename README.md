@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 <head>
 
 </head>
@@ -135,11 +135,10 @@ We noticed weaker correlations among papsmear, breast exam, and mamogram. Becaus
 <h3>
 <a id="hospitalization-model" class="anchor" href="#hospitalization-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hospitalization Model</h3>
 <p>
-(Alex's text)
+Our best model is a random forest that predicts hospitilization using various predictor variables such as Behaviors, Controls, and Plan Design. This is a high performing model compared to a baseline model that predicts the majority class (non-hospilization) 
 <img src="https://lh3.googleusercontent.com/deGW4Vf85gNqoevFrEKxJshZ1vEJu5NM9SzJCVWjaLRpOxJIlyLO9nbP48b0eu4r_uYFjOV6_i9xmn0mbUkTHT8NYE5rELM3wIbu7KHt6LI5BTVOat6ao259Qn16ZFreFxScWvN38cuqdSm8j4UW6nAdbvSij_XmfPEllvUrvXnh7uuWphdXLW9i3I-24-kgP2nRFT0drURRtPp_sBLN079CpjoKN_qrxGS-3bByT9fd-S7sxLpsPLNfUFm7b46tO5spaJX34Q6C6l2CCKihhRiw81ogBjsCRcOrDT9pUg5R2mF91FWA8xPY3ctCscW02XAFpAyaLHUOy52n-89rvbJXY7cn9G2K6vX0TzlgnaPCObEeezjZxMrkS812s_cCSl51iqjti_8f-xkyp779Xr6Pq2bV9DtQl3RcwSQdVmuNQmYePvSPpcgwl7FAplD6CYKq_Ut6l6dtWMHz0B_wWiH8JI1SwYPKtItxuJZrJk-q_AScN8bRAAhWm8QyNrcYh5GFXmLs4vXAlC5GLJ7PgwBrEZf9-0nUo8JE10mMcFd7eX_8Ei61J1_mrZPfUs2EkzIxtWQ9Z01XRdwJXRHcog3yQkHkpt0aOZugSxfd=w1204-h677-no" alt="Hospitalization Model One" align="right" height=350>
 </p>
 <p>
-  (Alex's text)
   <img src="https://lh3.googleusercontent.com/P8r2hkpMW5Kb6le9cYqxwXGIGxHO4SPbixCb67gGUennbeTrjCPkmvH3J-4g9Dg65SXzHC5gqz7mq8l1AEQopIMdIkOuipqRHWjiZ_fZLDxkQk-5oyWwGiUHtoZ-pNhCK-A-6Sp2X8t0KyAJ68I7gHJ4a66hIqE0BXlokcFvQiWBVfeyBfzXdwdaMdW_6Kc-IhWaU-nt-fj6RoedT2uMYnnsBtu3QOZ1p06-H77F_0rd2LsP7Qs3WmqHqayrh2GZpVnEQbQYimICLDWpN4q4tPIYmiV1R2hG4D_2g83ZAkzCRkPq54VAMF632U2Eav5YZiIqLtib1Q4W1Iee8fAnlc9KBsfBFJRR7z8Gf6W7ZLwZhgpaAmvN_36eyEaAo-KBVtlC_6e1BNgBmBzpoyw_akjUwjb5Al5LzFjgCQjCWQohEkbgIu23PsXhoszlW63Fu0yv6d8n1VRivI4I9JGrjvxBMG9EamgXHKMTmuzlMVDAsYlnssaKwsFb-eU1Eg7PliHMRwvftw6SQtpDPG7IcFq5Pljc7FjJrjCxW5uIg6rREbLkW9zvWWE-s8TeSb8z1JyLvVGk4EeaChL40oWyZBliIdvLLhkGOWQRPHhO=w1204-h677-no" alt="Hospitalization Model Two" align="left" height=350>
 </p>
 
@@ -152,11 +151,10 @@ We noticed weaker correlations among papsmear, breast exam, and mamogram. Becaus
   Our team further wanted to see if certain preventive care measures could be grouped together in order to simplify our prediction. We summarized the behaviors of respondents by those who follow or do not follow CDC guidelines and divided age into three categories: less than 40, 40-60, and greater than 60. We, however, did not see a greater improvement using this generalization, since it appears someone who is already getting regular checkups is also following through with recommended preventive care.
 <img src="https://lh3.googleusercontent.com/Gilz6sJsruJcCRonp4jguJBjaci9BzeaEJsrsjvov0lN1e3NZOloPbnNKLqWTRcUcpf5YMp45psOTiMpGrppgKybGZ0K3T9sv8ao_F9ZKGL8ARFGNhSukidki2VOWgX89gu2TfFJ5B2zirlag1N6tpGPRoy03PDi9tE2zzFdo1uqO2mhUt86e2B4tu3Cn56d99KkM0S8k29_hhuYQy2q62e4ZmnF0Hs9JFm07Gd9pVLaSJrZ-AXJL6U5Ws9iPUP3apgYu4lH0WQf20nll1we6PIrpP9MngYmnTOmPBUMwC9ERDvit6TS7ZLzRqxg7bTgdM4cu-fH-VdXZ_5foO-3eAjGh5VdovFG20FpQmxnB5dLYG0BldFY9bOyn2cJAaLnOGaE-6ST04r80QmB-XtSXnWqNPOx-atLsxMi0u-vqDkbcfCSiLUO5P545Uaprr1eGiV3Zg6NETUWIVUPA3b-EoffsH-Jz6LdRryQgTVncjLK5ZCp-SnbsNfMCU-DRiHI73zHgR6phiuyrjDoMgHiMMOiKpkE5u_wxk6UJS7VNhVDQSBTCfu-qFGZw5x-SOb2zlyWjcq7O9DgyuR9Tm-vA_c8iF-tAwKKfUzTMB0Z=w1204-h677-no" alt="Behavior Model Two" align="left" height=350>
  </p>
-
 <h3>
 <a id="challenges-triumphs" class="anchor" href="#challenges-triumphs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Challenges and Triumphs</h3>
 <h4>Challenges</h4>
-<p>(Alex - challenges)</p>
+<p>Data prep was one of our largest challenges - It took some time to understand the MEPS survey, how it was conducted, and what variables we needed to look into. Another challenge we faced was dealing with the imbalanced nature of the dataset. There are many more observations of non-hospitlization than hospilization among survey respondents. We needed to weight hospilization observations more heavily for our model to have better generaliztion accuracy.</p>
 <h4>Triumphs</h4>
 <p>Out of 1900 variables we able to isolate specific features for plan design, behaviors, and hospitalizations from the MEPS dataset.
 Created a model for predicting hospitalizations from patient behaviors with an accuracy above 88 percent, unprecedented in the industry.
